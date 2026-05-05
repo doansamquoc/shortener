@@ -3,6 +3,7 @@ package dev.sam.shortener.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class Url extends Base {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	String originalUrl;
 
-	@Column(nullable = false, unique = true, length = 10)
+	@Column(nullable = false, length = 10)
 	String shortCode;
 
 	@Builder.Default
@@ -32,5 +33,9 @@ public class Url extends Base {
 	Long totalClicks = 0L;
 
 	@OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Clicker> clickers = new ArrayList<>();
+	List<Click> clicks = new ArrayList<>();
+
+	// Just for search
+	@Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+	String searchVector;
 }
