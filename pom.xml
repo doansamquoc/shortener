@@ -24,6 +24,7 @@
 		<maven.version>3.14.1</maven.version>
 		<lombok.version>1.18.46</lombok.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
+		<openapi.version>3.0.2</openapi.version>
 		<postgresql.version>42.7.11</postgresql.version>
 	</properties>
 
@@ -124,6 +125,13 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-database-postgresql</artifactId>
 			<version>12.5.0</version>
+		</dependency>
+
+		<!-- Swagger -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${openapi.version}</version>
 		</dependency>
 	</dependencies>
 

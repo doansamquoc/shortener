@@ -39,7 +39,7 @@ class UrlServiceImplTest {
 	@Test
 	@DisplayName("The short code provided")
 	void shouldSaveGetRedirectUrl_WhenShortCodeProvided() {
-		UrlCreationRequest request = new UrlCreationRequest("https://google.com", "my-custom-link");
+		UrlCreationRequest request = new UrlCreationRequest("https://google.com", null, "my-custom-link");
 		Url url = mapper.toEntity(request);
 
 		when(repository.save(any(Url.class))).thenReturn(url);
@@ -55,10 +55,10 @@ class UrlServiceImplTest {
 	@Test
 	@DisplayName("The short code not provided")
 	void shouldNotSaveGetRedirectUrl_WhenShortCodeNotProvided() {
-		UrlCreationRequest request = new UrlCreationRequest("https://google.com", null);
+		UrlCreationRequest request = new UrlCreationRequest("https://google.com", null, null);
 
 		Url initialUrl = new Url(null, "https://google.com", null, null, null, null);
-		Url savedUrl = Url.builder().id(123L).originalUrl("https://google.com").build();
+		Url savedUrl = Url.builder().id(123L).actualUrl("https://google.com").build();
 
 		when(repository.saveAndFlush(any(Url.class))).thenReturn(savedUrl);
 

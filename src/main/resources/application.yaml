@@ -31,12 +31,21 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
-  springdoc:
-    api-docs:
-      path: /v3/api-docs
-      enabled: true
-    swagger-ui:
-      enabled: true
+# SpringDoc OpenAPI/Swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    enabled: true
 
+# Application configuration properties
 app:
   secret-key: ${SECRET_KEY}
+
+  # SpringDoc-OpenAPI
+  spring-doc:
+    title: Shortener API Document
+    description: URL Shortener API Built By Sam
+    prod-server: Not deploy yet
+    version: 0.0.1
