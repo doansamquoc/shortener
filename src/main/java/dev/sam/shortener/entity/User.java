@@ -1,11 +1,12 @@
 package dev.sam.shortener.entity;
 
-import dev.sam.shortener.type.Role;
+import dev.sam.shortener.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,22 +20,20 @@ import java.util.Set;
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User extends Base {
-	@Column(nullable = false, unique = true)
+	@Column(name = "username")
 	String username;
 
-	@Column(nullable = false)
+	@Column(name = "password")
 	String password;
 
-	@Column(nullable = false, unique = true)
+	@Column(name = "email")
 	String email;
 
 	@Builder.Default
-	@Enumerated(EnumType.STRING)
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-	Set<Role> roles = Set.of(Role.USER);
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	Set<UserRole> roles = new HashSet<>();
 
 	@Builder.Default
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Url> urls = new ArrayList<>();
 }

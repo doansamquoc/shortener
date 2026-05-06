@@ -18,15 +18,18 @@ public class Click extends Base {
 	Url url;
 
 	// IP address
+	@Column(name = "ip_address")
 	String ipAddress;
 
 	// Browser name, OS name, e.g.
+	@Column(name = "user_agent")
 	String userAgent;
 
 	// Where's click from
+	@Column(name = "referer")
 	String referrer;
 
 	// Country code like VN, US, e.g.
-	@Column(name = "country_code", length = 2)
-	Character countryCode;
+	@Column(name = "country_code")
+	String countryCode;
 }

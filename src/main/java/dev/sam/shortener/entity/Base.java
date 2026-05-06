@@ -18,12 +18,15 @@ import java.time.Instant;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class Base {
 	@Id
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
 	@CreationTimestamp
+	@Column(name = "created_at")
 	Instant createdAt;
 
 	@UpdateTimestamp
+	@Column(name = "updated_at")
 	Instant updatedAt;
 }

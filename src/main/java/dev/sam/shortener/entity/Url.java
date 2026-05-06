@@ -22,11 +22,14 @@ public class Url extends Base {
 	@JoinColumn(name = "user_id")
 	User user;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
-	String originalUrl;
+	@Column(name = "actual_url")
+	String actualUrl;
 
-	@Column(nullable = false, length = 10)
+	@Column(name = "short_code")
 	String shortCode;
+
+	@Column(name = "title")
+	String title;
 
 	@Builder.Default
 	@Column(name = "total_clicks")
@@ -34,8 +37,4 @@ public class Url extends Base {
 
 	@OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Click> clicks = new ArrayList<>();
-
-	// Just for search
-	@Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
-	String searchVector;
 }
