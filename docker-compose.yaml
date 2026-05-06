@@ -32,14 +32,14 @@ services:
     volumes:
       - shortener-cache-data:/data
 
-  redis-insight:
+  shortener-redis-insight:
     image: redis/redisinsight:latest
     ports:
       - "5540:5540"
     volumes:
-      - redis-insight-data:/data
+      - shortener-redis-insight:/data
 
 volumes:
   shortener-db-data:
   shortener-cache-data:
-  redis-insight-data:
+  shortener-redis-insight:
