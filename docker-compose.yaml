@@ -2,7 +2,7 @@ version: "8.3"
 services:
   shortener-db:
     container_name: shortener-db
-    image: postgres:alpine
+    image: postgres:16-alpine
     ports:
       - "5432:5432"
     volumes:
