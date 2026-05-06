@@ -14,7 +14,7 @@ public record ApiResponse<T>(T data, String message, LocalDateTime timestamp) {
 
 	// Data and default message
 	public static <T> ApiResponse<T> of(T data) {
-		return new ApiResponse<T>(data, "Successfully", LocalDateTime.now());
+		return new ApiResponse<>(data, "Successfully", LocalDateTime.now());
 	}
 
 	// Message only

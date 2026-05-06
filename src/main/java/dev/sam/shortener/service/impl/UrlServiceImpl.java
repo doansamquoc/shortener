@@ -1,0 +1,83 @@
+package dev.sam.shortener.service.impl;
+
+import dev.sam.shortener.constant.CacheNames;
+import dev.sam.shortener.dto.api.PageResponse;
+import dev.sam.shortener.dto.request.UrlCreationRequest;
+import dev.sam.shortener.dto.response.UrlResponse;
+import dev.sam.shortener.entity.Url;
+import dev.sam.shortener.enums.ErrorCode;
+import dev.sam.shortener.exception.AppException;
+import dev.sam.shortener.mapper.UrlMapper;
+import dev.sam.shortener.repository.UrlRepository;
+import dev.sam.shortener.service.UrlService;
+import dev.sam.shortener.util.Base62Encoder;
+import jakarta.persistence.EntityManager;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class UrlServiceImpl implements UrlService {
+	UrlMapper mapper;
+	EntityManager manager;
+	UrlRepository repository;
+
+	@Override
+	@Transactional
+	public UrlResponse create(UrlCreationRequest request) {
+		Url url = mapper.toEntity(request);
+
+		// If user enter the short code, just save and return
+		if (request.shortCode() != null) return createShortCodeProvided(url);
+
+		Long nextId = getNextId();
+		String shortCode = Base62Encoder.encode(nextId);
+		url.setShortCode(shortCode);
+		return mapper.toDto(save(url));
+	}
+
+	@Override
+	@Cacheable(value = CacheNames.URL, key = "#shortCode")
+	public String getRedirectUrl(String shortCode) {
+		if (shortCode == null) return "/error"; Url url = findByShortCode(shortCode); return url.getActualUrl();
+	}
+
+	@Override
+	public PageResponse<UrlResponse> searchUrl(Long userId, String searchTerm, Pageable pageable) {
+		if (searchTerm == null || searchTerm.isBlank()) {
+			return PageResponse.from(repository.findAllByUserId(userId, pageable).map(mapper::toDto));
+		}
+
+		Page<Url> page = repository.searchWordSimilarity(userId, searchTerm, 0.3, pageable);
+		return PageResponse.from(page.map(mapper::toDto));
+	}
+
+
+	private UrlResponse createShortCodeProvided(Url url) {
+		if (!existsByShortCode(url.getShortCode())) return mapper.toDto(save(url));
+		throw AppException.of(ErrorCode.URL_CODE_EXISTS);
+	}
+
+	private Url save(Url url) {
+		return repository.save(url);
+	}
+
+	private Long getNextId() {
+		return (Long) manager.createNativeQuery("SELECT nextVal('urls_id_seq')").getSingleResult();
+	}
+
+	private boolean existsByShortCode(String shortCode) {
+		return repository.existsByShortCode(shortCode);
+	}
+
+	private Url findByShortCode(String shortCode) {
+		return repository.findByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+	}
+}
