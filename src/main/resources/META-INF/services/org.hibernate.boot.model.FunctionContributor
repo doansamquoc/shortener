@@ -1,1 +1,1 @@
-dev.sam.shortener.config.PostgresFTSFunctionContributor
+dev.sam.shortener.config.SQLFunctionContributor
