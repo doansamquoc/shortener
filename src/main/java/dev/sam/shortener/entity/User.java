@@ -1,6 +1,5 @@
 package dev.sam.shortener.entity;
 
-import dev.sam.shortener.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
