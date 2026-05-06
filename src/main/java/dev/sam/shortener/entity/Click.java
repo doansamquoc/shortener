@@ -10,18 +10,15 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "clickers")
+@Table(name = "clicks")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Clicker extends Base {
+public class Click extends Base {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "url_id")
 	Url url;
 
 	// IP address
 	String ipAddress;
-
-	// ID of browser
-	String fingerprintId;
 
 	// Browser name, OS name, e.g.
 	String userAgent;
