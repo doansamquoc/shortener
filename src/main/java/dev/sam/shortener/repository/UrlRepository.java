@@ -18,8 +18,6 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 
 	Optional<Url> findByShortCode(String shortCode);
 
-	List<UrlResponse> findAllByUserId(Long userId);
-
 	Page<Url> findAllByUserId(Long userId, Pageable pageable);
 
 	@Query("""

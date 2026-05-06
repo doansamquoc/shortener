@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public record ApiResponse<T>(T data, String message, LocalDateTime timestamp) {
 	public static <T> ApiResponse<T> of(T data, String message) {
-		return new ApiResponse<T>(data, message, LocalDateTime.now());
+		return new ApiResponse<>(data, message, LocalDateTime.now());
 	}
 
 	// Data and default message
