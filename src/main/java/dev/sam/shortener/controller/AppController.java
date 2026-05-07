@@ -37,10 +37,15 @@ public class AppController {
 	}
 
 	private ClickRequest makeRequest(HttpServletRequest request) {
-		String ipAddress = request.getHeader("X-FORWARDED-FOR");
-		if (ipAddress == null) ipAddress = request.getRemoteAddr();
+		String ipAddress = getIpAddress(request);
 		String userAgent = request.getHeader("User-Agent");
 		String referer = request.getHeader("Referer");
 		return ClickRequest.builder().ipAddress(ipAddress).userAgent(userAgent).referrer(referer).build();
+	}
+
+	private String getIpAddress(HttpServletRequest request) {
+		String ipAddress = request.getHeader("X-FORWARDED-FOR");
+		if (ipAddress == null) ipAddress = request.getRemoteAddr();
+		return ipAddress;
 	}
 }
