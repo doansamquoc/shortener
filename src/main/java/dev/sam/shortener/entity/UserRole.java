@@ -9,17 +9,17 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_roles")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRole extends Base {
 	@JoinColumn(name = "user_id")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	User user;
 
+	@Builder.Default
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
-	Role role;
+	Role role = Role.USER;
 }

@@ -48,6 +48,10 @@ app:
   secret-key: ${SECRET_KEY}
   cleanup-urls-after-days: 30
 
+  # Token second * minute * hour * day
+  access-token-expiration: 900000 # 15 minutes
+  refresh-token-expiration: 604800 # 7 days
+
   # SpringDoc-OpenAPI
   spring-doc:
     title: Shortener API Document

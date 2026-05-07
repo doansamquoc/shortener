@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -44,5 +46,14 @@ public class BeanConfiguration {
 		byte[] key = props.getSecretKey().getBytes(StandardCharsets.UTF_8);
 		if (key.length < 32) throw new IllegalArgumentException("Secret key length must be at least 32 characters");
 		return new SecretKeySpec(key, MacAlgorithm.HS512.getName());
+	}
+
+	@Bean
+	AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) {
+		try {
+			return configuration.getAuthenticationManager();
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot get authentication manager configuration", e);
+		}
 	}
 }

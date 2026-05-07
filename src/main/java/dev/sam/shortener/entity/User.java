@@ -1,8 +1,10 @@
 package dev.sam.shortener.entity;
 
+import dev.sam.shortener.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,8 +14,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
@@ -29,7 +30,7 @@ public class User extends Base {
 	String email;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	Set<UserRole> roles = new HashSet<>();
 
 	@Builder.Default

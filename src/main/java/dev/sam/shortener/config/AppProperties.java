@@ -17,6 +17,10 @@ public class AppProperties {
 	String secretKey;
 	int cleanupUrlsAfterDays;
 
+	// Token
+	long accessTokenExpiration;
+	long refreshTokenExpiration;
+
 	@NestedConfigurationProperty
 	final SpringDoc springDoc = new SpringDoc();
 
