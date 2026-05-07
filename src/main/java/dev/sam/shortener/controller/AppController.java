@@ -1,9 +1,7 @@
 package dev.sam.shortener.controller;
 
 import dev.sam.shortener.dto.request.ClickRequest;
-import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.event.UrlClickedEvent;
-import dev.sam.shortener.service.ClickService;
 import dev.sam.shortener.service.UrlService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
