@@ -8,7 +8,6 @@ import dev.sam.shortener.repository.ClickRepository;
 import dev.sam.shortener.service.ClickService;
 import dev.sam.shortener.service.CountryCodeService;
 import dev.sam.shortener.service.UrlService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -45,12 +44,6 @@ public class ClickServiceImpl implements ClickService {
 
 		log.info(click.toString());
 		save(click);
-	}
-
-	public String getIpAddress(HttpServletRequest request) {
-		String xfHeader = request.getHeader("x-forwarded-for");
-		if (xfHeader == null || xfHeader.isEmpty() || "unknown".equalsIgnoreCase(xfHeader)) return request.getRemoteAddr();
-		return xfHeader.split(",")[0];
 	}
 
 	private Click save(Click click) {
