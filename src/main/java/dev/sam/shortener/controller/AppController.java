@@ -29,6 +29,7 @@ public class AppController {
 	public ResponseEntity<Void> redirect(@PathVariable String shortCode, HttpServletRequest request) {
 		UrlResponse url = service.getRedirectUrl(shortCode);
 
+		// Async task
 		service.incrementTotalClicks(url.id());
 		clickService.create(url.id(), makeRequest(request));
 

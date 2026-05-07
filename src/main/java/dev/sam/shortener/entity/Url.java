@@ -35,6 +35,7 @@ public class Url extends Base {
 	@Column(name = "total_clicks")
 	Long totalClicks = 0L;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<Click> clicks = new ArrayList<>();
 }

@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfiguration {
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) {
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.cors(AbstractHttpConfigurer::disable);
 		http.csrf(AbstractHttpConfigurer::disable);
 		http.authorizeHttpRequests(auth-> auth.anyRequest().permitAll());
