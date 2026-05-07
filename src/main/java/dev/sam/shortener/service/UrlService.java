@@ -14,6 +14,12 @@ public interface UrlService {
 
 	UrlResponse update(Long id, UrlUpdateRequest request);
 
+	void delete(Long userId, Long id);
+
+	void deleteAll(Long userId);
+
+	void cleanupUrls();
+
 	void incrementTotalClicks(String shortCode);
 
 	PageResponse<UrlResponse> searchUrl(Long userId, String searchTerm, Pageable pageable);

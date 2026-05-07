@@ -1,5 +1,6 @@
 package dev.sam.shortener.service.impl;
 
+import dev.sam.shortener.config.AppProperties;
 import dev.sam.shortener.constant.CacheNames;
 import dev.sam.shortener.dto.api.PageResponse;
 import dev.sam.shortener.dto.request.UrlCreationRequest;
@@ -23,13 +24,16 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UrlServiceImpl implements UrlService {
 	UrlMapper mapper;
+	AppProperties props;
 	UrlRepository repository;
 	EntityManager entityManager;
 
@@ -63,6 +67,27 @@ public class UrlServiceImpl implements UrlService {
 
 		mapper.toEntity(request, url);
 		return mapper.toDto(save(url));
+	}
+
+	@Override
+	public void delete(Long userId, Long id) {
+		repository.deleteByUserIdAndId(userId, id);
+	}
+
+	@Override
+	public void deleteAll(Long userId) {
+		repository.deleteAllByUserId(userId);
+	}
+
+	public void delete(Long id) {
+		repository.deleteById(id);
+	}
+
+	@Override
+	public void cleanupUrls() {
+		int days = props.getCleanupUrlsAfterDays();
+		Instant threshold = Instant.now().minus(days, ChronoUnit.DAYS);
+		repository.cleanupUrls(threshold);
 	}
 
 	@Override
@@ -123,5 +148,9 @@ public class UrlServiceImpl implements UrlService {
 
 	private String findActualUrl(String shortCode) {
 		return repository.findActualUrlByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+	}
+
+	private Url findByIdAndUserId(Long id, Long userId) {
+		return repository.findByIdAndUserId(id, userId).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
 	}
 }

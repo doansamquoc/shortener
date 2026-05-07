@@ -52,4 +52,16 @@ public class UrlController {
 		UrlResponse response = service.getUrl(shortCode);
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
 	}
+
+	@DeleteMapping("/{id}")
+	ResponseEntity<ApiResponse<String>> deleteUrlById(@PathVariable Long id) {
+		service.delete(1L, id);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of("Deleted successfully"));
+	}
+
+	@DeleteMapping
+	ResponseEntity<ApiResponse<String>> deleteAllById() {
+		service.deleteAll(1L);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of("All urls deleted successfully"));
+	}
 }

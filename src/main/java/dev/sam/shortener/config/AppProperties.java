@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AppProperties {
 	String secretKey;
+	int cleanupUrlsAfterDays;
 
 	@NestedConfigurationProperty
 	final SpringDoc springDoc = new SpringDoc();

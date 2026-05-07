@@ -46,6 +46,7 @@ springdoc:
 # Application configuration properties
 app:
   secret-key: ${SECRET_KEY}
+  cleanup-urls-after-days: 30
 
   # SpringDoc-OpenAPI
   spring-doc:
