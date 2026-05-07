@@ -5,14 +5,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class GeoIPConfiguration {
 	@Bean
-	DatabaseReader databaseReader() throws IOException {
-		File database = new ClassPathResource("GeoLite2-Country/GeoLite2-Country.mmdb").getFile();
-		return new DatabaseReader.Builder(database).build();
+	public DatabaseReader databaseReader() throws IOException {
+		InputStream inputStream = new ClassPathResource("GeoLite2-Country/GeoLite2-Country.mmdb").getInputStream();
+		return new DatabaseReader.Builder(inputStream).build();
 	}
 }
