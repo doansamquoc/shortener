@@ -12,6 +12,10 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 	SERVER_INTERNAL(5001, "server.internal", HttpStatus.INTERNAL_SERVER_ERROR.value()),
 
+	// AUTHENTICATION
+	AUTH_UNAUTHORIZED(4001, "auth.unauthorized", HttpStatus.UNAUTHORIZED.value()),
+	AUTH_ACCESS_DENIED(4003, "auth.denied", HttpStatus.FORBIDDEN.value()),
+
 	// USER
 	USER_EMAIL_EXISTS(2001, "user.email.exists", HttpStatus.CONFLICT.value()),
 	USER_USERNAME_EXISTS(2002, "user.username.exists", HttpStatus.CONFLICT.value()),

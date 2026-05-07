@@ -1,0 +1,29 @@
+package dev.sam.shortener.config.jwt;
+
+import dev.sam.shortener.enums.ErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@Component
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class JwtAccessDeniedHandler implements AccessDeniedHandler {
+	AuthErrorWriter writer;
+
+	@Override
+	public void handle(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		AccessDeniedException accessDeniedException
+	) throws IOException {
+		writer.writeError(response, ErrorCode.AUTH_ACCESS_DENIED, request.getServletPath());
+	}
+}
