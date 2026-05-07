@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,9 @@ public class Url extends Base {
 	@Builder.Default
 	@Column(name = "total_clicks")
 	Long totalClicks = 0L;
+
+	@Column(name = "last_click_at")
+	Instant lastClickAt;
 
 	@Builder.Default
 	@OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)

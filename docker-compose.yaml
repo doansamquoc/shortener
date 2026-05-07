@@ -29,6 +29,7 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
+    command: redis-server --requirepass 123456
     volumes:
       - shortener-cache-data:/data
 

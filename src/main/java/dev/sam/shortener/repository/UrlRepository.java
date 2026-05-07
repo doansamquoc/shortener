@@ -23,21 +23,21 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 
 	@Modifying
 	@Transactional
-	@Query("UPDATE Url u SET u.totalClicks = u.totalClicks + 1 WHERE u.shortCode = :shortCode")
+	@Query("UPDATE Url u SET u.totalClicks = u.totalClicks + 1, u.lastClickAt = CURRENT_TIMESTAMP WHERE u.shortCode = :shortCode")
 	void incrementTotalClicks(@Param("shortCode") String shortCode);
 
 	Page<Url> findAllByUserId(Long userId, Pageable pageable);
 
 	@Query("""
-		SELECT u FROM Url u
-		WHERE u.user.id = :userId
-		AND (function('word_similarity', :searchTerm, u.title) > :threshold
-		     OR function('word_similarity', :searchTerm, u.actualUrl) > :threshold)
-		ORDER BY function('greatest',
-		     function('word_similarity', :searchTerm, u.title),
-		     function('word_similarity', :searchTerm, u.actualUrl)
-		) DESC
-	""")
+			SELECT u FROM Url u
+			WHERE u.user.id = :userId
+			AND (function('word_similarity', :searchTerm, u.title) > :threshold
+			     OR function('word_similarity', :searchTerm, u.actualUrl) > :threshold)
+			ORDER BY function('greatest',
+			     function('word_similarity', :searchTerm, u.title),
+			     function('word_similarity', :searchTerm, u.actualUrl)
+			) DESC
+		""")
 	Page<Url> searchWordSimilarity(
 		@Param("userId") Long userId,
 		@Param("searchTerm") String searchTerm,
