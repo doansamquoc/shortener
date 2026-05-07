@@ -78,10 +78,6 @@ public class UrlServiceImpl implements UrlService {
 		repository.deleteAllByUserId(userId);
 	}
 
-	public void delete(Long id) {
-		repository.deleteById(id);
-	}
-
 	@Override
 	public void cleanupUrls() {
 		int days = props.getCleanupUrlsAfterDays();
@@ -147,9 +143,5 @@ public class UrlServiceImpl implements UrlService {
 
 	private String findActualUrl(String shortCode) {
 		return repository.findActualUrlByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
-	}
-
-	private Url findByIdAndUserId(Long id, Long userId) {
-		return repository.findByIdAndUserId(id, userId).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
 	}
 }

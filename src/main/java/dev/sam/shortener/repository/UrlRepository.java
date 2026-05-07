@@ -47,10 +47,6 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 		Pageable pageable
 	);
 
-	Optional<Url> findByIdAndUserId(Long id, Long userId);
-
-	List<Url> findAllByUserId(Long userId);
-
 	@Transactional
 	void deleteAllByUserId(Long userId);
 
