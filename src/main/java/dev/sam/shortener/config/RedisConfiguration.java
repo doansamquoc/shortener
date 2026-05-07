@@ -43,7 +43,7 @@ public class RedisConfiguration {
 	@Bean
 	public RedisCacheManager redisCacheManager(RedisConnectionFactory factory, RedisCacheConfiguration config) {
 		Map<String, RedisCacheConfiguration> cache = new HashMap<>();
-		cache.put(CacheNames.URL, config.entryTtl(Duration.ofHours(2)));
+		cache.put(CacheNames.URL_SHORT, config.entryTtl(Duration.ofHours(2)));
 		return RedisCacheManager.builder(factory).cacheDefaults(config).withInitialCacheConfigurations(cache).build();
 	}
 

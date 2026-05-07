@@ -18,10 +18,13 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 
 	Optional<Url> findByShortCode(String shortCode);
 
+	@Query("SELECT u.actualUrl FROM Url u WHERE u.shortCode = :shortCode")
+	Optional<String> findActualUrlByShortCode(String shortCode);
+
 	@Modifying
 	@Transactional
-	@Query("UPDATE Url u SET u.totalClicks = u.totalClicks + 1 WHERE u.id = :id")
-	void incrementTotalClicks(Long id);
+	@Query("UPDATE Url u SET u.totalClicks = u.totalClicks + 1 WHERE u.shortCode = :shortCode")
+	void incrementTotalClicks(@Param("shortCode") String shortCode);
 
 	Page<Url> findAllByUserId(Long userId, Pageable pageable);
 

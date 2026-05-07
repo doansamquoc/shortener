@@ -39,4 +39,10 @@ public class UrlController {
 		PageResponse<UrlResponse> response = service.searchUrl(1L, searchTerm, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
 	}
+
+	@GetMapping("/{shortCode}")
+	ResponseEntity<ApiResponse<UrlResponse>> getUrlById(@PathVariable String shortCode) {
+		UrlResponse response = service.getUrl(shortCode);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
+	}
 }

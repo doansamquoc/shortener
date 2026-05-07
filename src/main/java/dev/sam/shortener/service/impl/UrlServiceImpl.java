@@ -6,6 +6,7 @@ import dev.sam.shortener.dto.request.UrlCreationRequest;
 import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.entity.Url;
 import dev.sam.shortener.enums.ErrorCode;
+import dev.sam.shortener.event.UrlClickedEvent;
 import dev.sam.shortener.exception.AppException;
 import dev.sam.shortener.mapper.UrlMapper;
 import dev.sam.shortener.repository.UrlRepository;
@@ -15,7 +16,10 @@ import jakarta.persistence.EntityManager;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -27,8 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UrlServiceImpl implements UrlService {
 	UrlMapper mapper;
-	EntityManager manager;
 	UrlRepository repository;
+	EntityManager entityManager;
 
 	@Override
 	@Transactional
@@ -45,16 +49,16 @@ public class UrlServiceImpl implements UrlService {
 	}
 
 	@Override
-	@Cacheable(value = CacheNames.URL, key = "#shortCode")
-	public UrlResponse getRedirectUrl(String shortCode) {
-		if (shortCode == null) return null;
-		return mapper.toDto(findByShortCode(shortCode));
+	@Cacheable(value = CacheNames.URL_SHORT, key = "#shortCode")
+	public String getRedirectUrl(String shortCode) {
+		if (shortCode == null) return "/not-found";
+		return findActualUrl(shortCode);
 	}
 
 	@Override
 	@Async("clickExecutor")
-	public void incrementTotalClicks(Long id) {
-		repository.incrementTotalClicks(id);
+	public void incrementTotalClicks(String shortCode) {
+		repository.incrementTotalClicks(shortCode);
 	}
 
 	@Override
@@ -65,6 +69,16 @@ public class UrlServiceImpl implements UrlService {
 
 		Page<Url> page = repository.searchWordSimilarity(userId, searchTerm, 0.3, pageable);
 		return PageResponse.from(page.map(mapper::toDto));
+	}
+
+	@Override
+	public UrlResponse getUrlById(Long id) {
+		return mapper.toDto(findById(id));
+	}
+
+	@Override
+	public UrlResponse getUrl(String shortCode) {
+		return mapper.toDto(findByShortCode(shortCode));
 	}
 
 	@Override
@@ -82,7 +96,7 @@ public class UrlServiceImpl implements UrlService {
 	}
 
 	private Long getNextId() {
-		return (Long) manager.createNativeQuery("SELECT nextVal('urls_id_seq')").getSingleResult();
+		return (Long) entityManager.createNativeQuery("SELECT nextVal('urls_id_seq')").getSingleResult();
 	}
 
 	private boolean existsByShortCode(String shortCode) {
@@ -91,5 +105,13 @@ public class UrlServiceImpl implements UrlService {
 
 	private Url findByShortCode(String shortCode) {
 		return repository.findByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+	}
+
+	private Url findById(Long id) {
+		return repository.findById(id).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+	}
+
+	private String findActualUrl(String shortCode) {
+		return repository.findActualUrlByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
 	}
 }

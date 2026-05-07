@@ -1,19 +1,26 @@
 package dev.sam.shortener.service;
 
+import dev.sam.shortener.constant.CacheNames;
 import dev.sam.shortener.dto.api.PageResponse;
 import dev.sam.shortener.dto.request.UrlCreationRequest;
 import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.entity.Url;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 
 public interface UrlService {
 	UrlResponse create(UrlCreationRequest request);
 
-	UrlResponse getRedirectUrl(String shortCode);
+	String getRedirectUrl(String shortCode);
 
-	void incrementTotalClicks(Long id);
+	void incrementTotalClicks(String shortCode);
 
 	PageResponse<UrlResponse> searchUrl(Long userId, String searchTerm, Pageable pageable);
+
+	UrlResponse getUrlById(Long id);
+
+	UrlResponse getUrl(String shortCode);
 
 	Url getReference(Long id);
 }
