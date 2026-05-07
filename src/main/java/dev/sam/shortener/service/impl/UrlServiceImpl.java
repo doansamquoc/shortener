@@ -102,11 +102,6 @@ public class UrlServiceImpl implements UrlService {
 	}
 
 	@Override
-	public UrlResponse getUrlById(Long id) {
-		return mapper.toDto(findById(id));
-	}
-
-	@Override
 	public UrlResponse getUrl(String shortCode) {
 		return mapper.toDto(findByShortCode(shortCode));
 	}
