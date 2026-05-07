@@ -18,6 +18,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,8 +46,15 @@ public class UrlServiceImpl implements UrlService {
 
 	@Override
 	@Cacheable(value = CacheNames.URL, key = "#shortCode")
-	public String getRedirectUrl(String shortCode) {
-		if (shortCode == null) return "/error"; Url url = findByShortCode(shortCode); return url.getActualUrl();
+	public UrlResponse getRedirectUrl(String shortCode) {
+		if (shortCode == null) return null;
+		return mapper.toDto(findByShortCode(shortCode));
+	}
+
+	@Override
+	@Async("clickExecutor")
+	public void incrementTotalClicks(Long id) {
+		repository.incrementTotalClicks(id);
 	}
 
 	@Override
@@ -59,6 +67,10 @@ public class UrlServiceImpl implements UrlService {
 		return PageResponse.from(page.map(mapper::toDto));
 	}
 
+	@Override
+	public Url getReference(Long id) {
+		return repository.getReferenceById(id);
+	}
 
 	private UrlResponse createShortCodeProvided(Url url) {
 		if (!existsByShortCode(url.getShortCode())) return mapper.toDto(save(url));

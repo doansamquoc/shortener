@@ -1,0 +1,1 @@
+ALTER TABLE clicks ALTER COLUMN country_code TYPE VARCHAR(8);

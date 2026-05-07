@@ -21,7 +21,7 @@ public class Click extends Base {
 	@Column(name = "ip_address")
 	String ipAddress;
 
-	// Browser name, OS name, e.g.
+	// Browser name, OS name, etc
 	@Column(name = "user_agent")
 	String userAgent;
 
@@ -29,7 +29,7 @@ public class Click extends Base {
 	@Column(name = "referer")
 	String referrer;
 
-	// Country code like VN, US, e.g.
+	// Country code like VN, US, etc
 	@Column(name = "country_code")
 	String countryCode;
 }
