@@ -8,6 +8,7 @@ public record UrlResponse(
 	String actualUrl,
 	String shortenedUrl,
 	Long totalClicks,
+	Instant lastClickAt,
 	Instant createdAt,
 	Instant updatedAt
 ) {}

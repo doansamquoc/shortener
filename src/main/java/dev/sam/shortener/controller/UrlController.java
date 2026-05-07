@@ -3,6 +3,7 @@ package dev.sam.shortener.controller;
 import dev.sam.shortener.dto.api.ApiResponse;
 import dev.sam.shortener.dto.api.PageResponse;
 import dev.sam.shortener.dto.request.UrlCreationRequest;
+import dev.sam.shortener.dto.request.UrlUpdateRequest;
 import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.service.UrlService;
 import jakarta.validation.Valid;
@@ -37,6 +38,12 @@ public class UrlController {
 		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		PageResponse<UrlResponse> response = service.searchUrl(1L, searchTerm, pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
+	}
+
+	@PatchMapping("/{id}")
+	ResponseEntity<ApiResponse<UrlResponse>> update(@PathVariable Long id, @Valid @RequestBody UrlUpdateRequest request) {
+		UrlResponse response = service.update(id, request);
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
 	}
 

@@ -3,6 +3,7 @@ package dev.sam.shortener.service.impl;
 import dev.sam.shortener.constant.CacheNames;
 import dev.sam.shortener.dto.api.PageResponse;
 import dev.sam.shortener.dto.request.UrlCreationRequest;
+import dev.sam.shortener.dto.request.UrlUpdateRequest;
 import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.entity.Url;
 import dev.sam.shortener.enums.ErrorCode;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +52,17 @@ public class UrlServiceImpl implements UrlService {
 	public String getRedirectUrl(String shortCode) {
 		if (shortCode == null) return "/not-found";
 		return findActualUrl(shortCode);
+	}
+
+	@Override
+	public UrlResponse update(Long id, UrlUpdateRequest request) {
+		Url url = findById(id);
+
+		if (request.shortCode() != null && !url.getShortCode().equals(request.shortCode()))
+			if (existsByShortCode(request.shortCode())) throw AppException.of(ErrorCode.URL_CODE_EXISTS);
+
+		mapper.toEntity(request, url);
+		return mapper.toDto(save(url));
 	}
 
 	@Override
