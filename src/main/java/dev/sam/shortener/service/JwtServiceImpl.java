@@ -51,7 +51,7 @@ public class JwtServiceImpl implements JwtService {
 
 		return new JWTClaimsSet.Builder()
 			.issuer("URL Shortener API")
-			.subject(String.valueOf(user.getUser().getId()))
+			.subject(String.valueOf(user.getId()))
 			.issueTime(issueTime)
 			.expirationTime(expirationTime)
 			.jwtID(UUID.randomUUID().toString())

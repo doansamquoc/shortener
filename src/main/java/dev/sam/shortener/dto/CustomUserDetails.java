@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,19 +23,18 @@ import static dev.sam.shortener.constant.AppConstant.AUTHORIZE_PREFIX;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomUserDetails implements UserDetails {
-	// User entity
-	User user;
-
-	// Jwt
-	String jwtId;
-	Instant jwtExpiresAt;
-
-	// Authorize
+	Long id;
+	String username;
+	String email;
+	String password;
 	Collection<? extends GrantedAuthority> authorities;
 
 	public CustomUserDetails(User user) {
-		this.user = user;
-		this.authorities = extractAuthorities(user.getRoles());
+		this.id = user.getId();
+		this.username = user.getUsername();
+		this.email = user.getEmail();
+		this.password = user.getPassword();
+		this.authorities = enrichAuthorities(user.getRoles());
 	}
 
 	@Override
@@ -46,15 +44,15 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return user.getPassword();
+		return this.password;
 	}
 
 	@Override
 	public String getUsername() {
-		return user.getUsername();
+		return this.username;
 	}
 
-	private static Collection<? extends GrantedAuthority> extractAuthorities(Set<UserRole> roles) {
+	private static Collection<? extends GrantedAuthority> enrichAuthorities(Set<UserRole> roles) {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(AUTHORIZE_PREFIX + role.getRole().name())
 		).collect(Collectors.toSet());
 	}
