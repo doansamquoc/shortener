@@ -8,7 +8,5 @@ public interface UserService {
 
 	User findByIdentifier(String identifier);
 
-	User findByEmail(String email);
-
 	User processOAuth2(String email);
 }

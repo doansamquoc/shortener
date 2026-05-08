@@ -1,6 +1,7 @@
 package dev.sam.shortener.repository;
 
 import dev.sam.shortener.entity.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,5 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	boolean existsByUsername(String username);
 
-	Optional<User> findByEmail(String email);
+	@EntityGraph(attributePaths = {"roles"})
+	Optional<User> findUserAndRolesByEmail(String email);
 }

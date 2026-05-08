@@ -4,7 +4,6 @@ import dev.sam.shortener.dto.request.UserRegistrationRequest;
 import dev.sam.shortener.entity.User;
 import dev.sam.shortener.entity.UserRole;
 import dev.sam.shortener.enums.ErrorCode;
-import dev.sam.shortener.enums.Role;
 import dev.sam.shortener.exception.AppException;
 import dev.sam.shortener.mapper.UserMapper;
 import dev.sam.shortener.repository.UserRepository;
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
 		User user = mapper.toEntity(request);
 
 		// Set role
-		UserRole role = UserRole.builder().user(user).role(Role.ROLE_USER).build();
+		UserRole role = new UserRole(user);
 		user.setRoles(Set.of(role));
 
 		return repository.save(user);
@@ -45,15 +44,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findByEmail(String email) {
-		return repository.findByEmail(email).orElseThrow(() -> AppException.of(ErrorCode.USER_NOT_FOUND));
+	public User processOAuth2(String email) {
+		return repository.findUserAndRolesByEmail(email).orElseGet(() -> newOAuth2User(email));
 	}
 
-	@Override
-	public User processOAuth2(String email) {
-		return repository.findByEmail(email).orElseGet(() -> create(
-			new UserRegistrationRequest(email, UsernameUtils.generateUsername(email), "YouCannotGuessThisPassword"))
-		);
+	private User newOAuth2User(String email) {
+		User user = new User();
+		user.setEmail(email);
+
+		UserRole role = new UserRole(user);
+		user.setRoles(Set.of(role));
+
+		String username = UsernameUtils.generateUsername(email);
+		user.setUsername(username);
+
+		return repository.save(user);
 	}
 
 	private boolean existsByEmail(String email) {

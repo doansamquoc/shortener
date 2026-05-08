@@ -10,7 +10,7 @@ public record UserRegistrationRequest(
 	String email,
 
 	@NotBlank(message = "user.username.required")
-	@Size(min = 4, max = 16, message = "user.username.size")
+	@Size(min = 4, max = 255, message = "user.username.size")
 	String username,
 
 	@NotBlank(message = "user.password.required")

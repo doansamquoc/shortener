@@ -22,4 +22,9 @@ public class UserRole extends Base {
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	Role role = Role.ROLE_USER;
+
+	public UserRole(User user) {
+		this.user = user;
+		this.role = Role.ROLE_USER;
+	}
 }

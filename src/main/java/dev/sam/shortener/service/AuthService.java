@@ -1,7 +1,7 @@
 package dev.sam.shortener.service;
 
 import dev.sam.shortener.dto.TokenDto;
-import dev.sam.shortener.dto.request.ExchangeAuthCodeRequest;
+import dev.sam.shortener.dto.request.ExchangeTokenRequest;
 import dev.sam.shortener.dto.request.LoginRequest;
 import dev.sam.shortener.dto.request.UserRegistrationRequest;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -13,5 +13,5 @@ public interface AuthService {
 
 	void logout(Jwt jwt);
 
-	TokenDto exchangeCode(ExchangeAuthCodeRequest request);
+	TokenDto exchangeToken(ExchangeTokenRequest request);
 }

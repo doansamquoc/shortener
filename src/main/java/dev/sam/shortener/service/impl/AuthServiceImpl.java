@@ -6,7 +6,7 @@ import dev.sam.shortener.cache.TokenBlacklist;
 import dev.sam.shortener.dto.CustomOAuth2User;
 import dev.sam.shortener.dto.CustomUserDetails;
 import dev.sam.shortener.dto.TokenDto;
-import dev.sam.shortener.dto.request.ExchangeAuthCodeRequest;
+import dev.sam.shortener.dto.request.ExchangeTokenRequest;
 import dev.sam.shortener.dto.request.JwtCreationRequest;
 import dev.sam.shortener.dto.request.LoginRequest;
 import dev.sam.shortener.dto.request.UserRegistrationRequest;
@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public TokenDto exchangeCode(ExchangeAuthCodeRequest request) {
+	public TokenDto exchangeToken(ExchangeTokenRequest request) {
 		Object userObj = authTemporaryCode.get(request.code());
 		CustomOAuth2User user = (CustomOAuth2User) userObj;
 		authTemporaryCode.remove(request.code());
