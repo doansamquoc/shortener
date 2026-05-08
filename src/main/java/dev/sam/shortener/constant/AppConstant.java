@@ -6,7 +6,4 @@ public class AppConstant {
 	public static final String AUTHORIZE_CLAIM_NAME = "authorities";
 	public static final String AUTHORIZE_PREFIX = "ROLE_";
 	public static final String JWT_USERNAME_CLAIM_NAME = "username";
-
-	public static final String AUTH_REQUEST_COOKIE_NAME = "oauth2_request";
-	public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
 }
