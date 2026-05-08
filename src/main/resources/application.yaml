@@ -35,6 +35,17 @@ spring:
     baseline-on-migrate: true
     baseline-version: 0
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
 # SpringDoc OpenAPI/Swagger
 springdoc:
   api-docs:
@@ -51,6 +62,10 @@ app:
   # Token second * minute * hour * day
   access-token-expiration: 900000 # 15 minutes
   refresh-token-expiration: 604800 # 7 days
+
+  auth-code-expiration: 600000 # 60 seconds
+
+  frontend-redirect-url: http://localhost:5173/oauth2/redirect
 
   # SpringDoc-OpenAPI
   spring-doc:

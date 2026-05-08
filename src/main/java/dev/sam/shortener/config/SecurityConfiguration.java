@@ -3,6 +3,9 @@ package dev.sam.shortener.config;
 import dev.sam.shortener.config.jwt.JwtAccessDeniedHandler;
 import dev.sam.shortener.config.jwt.JwtAuthenticationEntryPoint;
 import dev.sam.shortener.config.jwt.JwtConverter;
+import dev.sam.shortener.security.oauth2.OAuth2FailureHandler;
+import dev.sam.shortener.security.oauth2.OAuth2SuccessHandler;
+import dev.sam.shortener.service.CustomOAuth2UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,8 +19,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static dev.sam.shortener.constant.EndpointConstant.PUBLIC_ENDPOINTS;
-import static dev.sam.shortener.constant.EndpointConstant.SWAGGER_ENDPOINTS;
+import static dev.sam.shortener.constant.EndpointConstant.*;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +31,10 @@ public class SecurityConfiguration {
 	JwtConverter jwtConverter;
 	JwtAuthenticationEntryPoint authenticationEntryPoint;
 	JwtAccessDeniedHandler accessDeniedHandler;
+
+	CustomOAuth2UserService customOAuth2UserService;
+	OAuth2FailureHandler oAuth2FailureHandler;
+	OAuth2SuccessHandler oAuth2SuccessHandler;
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,6 +52,11 @@ public class SecurityConfiguration {
 				jwt.decoder(jwtDecoder);
 				jwt.jwtAuthenticationConverter(jwtConverter);
 			});
+		});
+		http.oauth2Login(oauth2 -> {
+			oauth2.userInfoEndpoint(u -> u.userService(customOAuth2UserService));
+			oauth2.successHandler(oAuth2SuccessHandler);
+			oauth2.failureHandler(oAuth2FailureHandler);
 		});
 		return http.build();
 	}

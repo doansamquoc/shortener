@@ -1,8 +1,8 @@
 package dev.sam.shortener.service;
 
 import com.nimbusds.jose.JOSEException;
-import dev.sam.shortener.dto.CustomUserDetails;
+import dev.sam.shortener.dto.request.JwtCreationRequest;
 
 public interface JwtService {
-	String createToken(CustomUserDetails user) throws JOSEException;
+	String generateToken(JwtCreationRequest request) throws JOSEException;
 }

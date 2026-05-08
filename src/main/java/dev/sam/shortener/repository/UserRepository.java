@@ -5,12 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	@Query("SELECT u FROM User u LEFT JOIN u.roles WHERE u.username = :identifier OR u.email = :identifier")
+	@Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.username = :identifier OR u.email = :identifier")
 	User findByIdentifier(String identifier);
 
 	boolean existsByEmail(String email);
 
 	boolean existsByUsername(String username);
+
+	Optional<User> findByEmail(String email);
 }

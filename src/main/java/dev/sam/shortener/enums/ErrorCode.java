@@ -19,6 +19,7 @@ public enum ErrorCode {
 	// USER
 	USER_EMAIL_EXISTS(2001, "user.email.exists", HttpStatus.CONFLICT.value()),
 	USER_USERNAME_EXISTS(2002, "user.username.exists", HttpStatus.CONFLICT.value()),
+	USER_NOT_FOUND(2003, "user.notfound", HttpStatus.NOT_FOUND.value()),
 
 	URL_CODE_EXISTS(1001, "url.short_code.exists", HttpStatus.CONFLICT.value()),
 	URL_NOT_FOUND(1002, "url.not_found", HttpStatus.NOT_FOUND.value()),

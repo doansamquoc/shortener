@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -28,16 +29,19 @@ public class RedisConfiguration {
 	public GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer() {
 		return new GenericJackson2JsonRedisSerializer().configure(mapper -> {
 			mapper.registerModule(new JavaTimeModule());
+
+			// Handler SimpleGrantedAuthority deserialize
+			mapper.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class);
 			mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		});
 	}
 
 	@Bean
 	public RedisCacheConfiguration redisCacheConfiguration(GenericJackson2JsonRedisSerializer serializer) {
-		return RedisCacheConfiguration.defaultCacheConfig(
-		).entryTtl(Duration.ofMinutes(60)
-		).serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
-		).serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
+		return RedisCacheConfiguration.defaultCacheConfig()
+		.entryTtl(Duration.ofMinutes(60))
+		.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+		.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
 	}
 
 	@Bean
@@ -49,8 +53,8 @@ public class RedisConfiguration {
 
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(
-		RedisConnectionFactory factory,
-		GenericJackson2JsonRedisSerializer serializer
+	RedisConnectionFactory factory,
+	GenericJackson2JsonRedisSerializer serializer
 	) {
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(factory);

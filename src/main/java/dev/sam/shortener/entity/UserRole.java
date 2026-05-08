@@ -21,5 +21,5 @@ public class UserRole extends Base {
 	@Builder.Default
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
-	Role role = Role.USER;
+	Role role = Role.ROLE_USER;
 }

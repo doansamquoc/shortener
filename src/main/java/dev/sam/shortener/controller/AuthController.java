@@ -2,6 +2,7 @@ package dev.sam.shortener.controller;
 
 import dev.sam.shortener.dto.TokenDto;
 import dev.sam.shortener.dto.api.ApiResponse;
+import dev.sam.shortener.dto.request.ExchangeAuthCodeRequest;
 import dev.sam.shortener.dto.request.LoginRequest;
 import dev.sam.shortener.dto.request.UserRegistrationRequest;
 import dev.sam.shortener.dto.response.AuthResponse;
@@ -48,5 +49,12 @@ public class AuthController {
 		Jwt jwt = auth.getToken();
 		service.logout(jwt);
 		return ResponseEntity.ok(ApiResponse.of("Logged out successfully"));
+	}
+
+	@PostMapping("/exchange")
+	private ResponseEntity<ApiResponse<AuthResponse>> exchangeCode(@Valid @RequestBody ExchangeAuthCodeRequest request) {
+		TokenDto token = service.exchangeCode(request);
+		AuthResponse response = new AuthResponse(token.accessToken());
+		return ResponseEntity.ok(ApiResponse.of(response));
 	}
 }

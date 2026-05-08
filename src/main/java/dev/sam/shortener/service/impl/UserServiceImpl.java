@@ -9,6 +9,7 @@ import dev.sam.shortener.exception.AppException;
 import dev.sam.shortener.mapper.UserMapper;
 import dev.sam.shortener.repository.UserRepository;
 import dev.sam.shortener.service.UserService;
+import dev.sam.shortener.util.UsernameUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
 		User user = mapper.toEntity(request);
 
 		// Set role
-		UserRole role = UserRole.builder().user(user).role(Role.USER).build();
+		UserRole role = UserRole.builder().user(user).role(Role.ROLE_USER).build();
 		user.setRoles(Set.of(role));
 
 		return repository.save(user);
@@ -41,6 +42,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findByIdentifier(String identifier) {
 		return repository.findByIdentifier(identifier);
+	}
+
+	@Override
+	public User findByEmail(String email) {
+		return repository.findByEmail(email).orElseThrow(() -> AppException.of(ErrorCode.USER_NOT_FOUND));
+	}
+
+	@Override
+	public User processOAuth2(String email) {
+		return repository.findByEmail(email).orElseGet(() -> create(
+			new UserRegistrationRequest(email, UsernameUtils.generateUsername(email), "YouCannotGuessThisPassword"))
+		);
 	}
 
 	private boolean existsByEmail(String email) {

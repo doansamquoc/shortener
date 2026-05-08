@@ -1,5 +1,5 @@
 package dev.sam.shortener.enums;
 
 public enum Role {
-	GUEST, USER, ADMIN
+	ROLE_GUEST, ROLE_USER, ROLE_ADMIN
 }

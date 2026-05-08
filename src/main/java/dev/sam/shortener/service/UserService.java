@@ -6,6 +6,9 @@ import dev.sam.shortener.entity.User;
 public interface UserService {
 	User create(UserRegistrationRequest request);
 
-	// Don't tell users that the identifier is incorrect
 	User findByIdentifier(String identifier);
+
+	User findByEmail(String email);
+
+	User processOAuth2(String email);
 }
