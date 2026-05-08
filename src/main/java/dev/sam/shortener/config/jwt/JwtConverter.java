@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.stereotype.Component;
 
@@ -35,17 +36,6 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
 	@Override
 	public @Nullable AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
 		Collection<GrantedAuthority> authorities = this.authoritiesConverter.convert(jwt);
-		Long id = Long.valueOf(jwt.getSubject());
-		String username = jwt.getClaimAsString("username");
-
-		User user = User.builder().id(id).username(username).build();
-		CustomUserDetails customUserDetails = CustomUserDetails.builder()
-			.user(user)
-			.jwtId(jwt.getId())
-			.jwtExpiresAt(jwt.getExpiresAt())
-			.authorities(authorities)
-			.build();
-
-		return new UsernamePasswordAuthenticationToken(user, customUserDetails, authorities);
+		return new JwtAuthenticationToken(jwt, authorities);
 	}
 }
