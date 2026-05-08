@@ -1,6 +1,7 @@
 package dev.sam.shortener.service.impl;
 
 import com.nimbusds.jose.JOSEException;
+import dev.sam.shortener.cache.TokenBlacklist;
 import dev.sam.shortener.dto.CustomUserDetails;
 import dev.sam.shortener.dto.TokenDto;
 import dev.sam.shortener.dto.request.LoginRequest;
@@ -20,7 +21,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,7 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 	JwtService jwtService;
 	UserService userService;
+	TokenBlacklist tokenBlacklist;
 	PasswordEncoder passwordEncoder;
 	AuthenticationManager authManager;
 
@@ -55,5 +60,12 @@ public class AuthServiceImpl implements AuthService {
 		String hashedPassword = passwordEncoder.encode(request.password());
 		User user = userService.create(new UserRegistrationRequest(request.email(), request.username(), hashedPassword));
 		return login(new LoginRequest(user.getEmail(), request.password()));
+	}
+
+	@Override
+	public void logout(Jwt jwt) {
+		if (jwt.getExpiresAt() == null) return;
+		long remaining = jwt.getExpiresAt().toEpochMilli() - System.currentTimeMillis();
+		tokenBlacklist.add(jwt.getId(), remaining, TimeUnit.MILLISECONDS);
 	}
 }
