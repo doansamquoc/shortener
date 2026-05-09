@@ -33,9 +33,6 @@ class UrlServiceImplTest {
 	@InjectMocks
 	private UrlServiceImpl service;
 
-	private UrlCreationRequest request;
-	private Url url;
-
 	@Test
 	@DisplayName("The short code provided")
 	void shouldSaveGetRedirectUrl_WhenShortCodeProvided() {
@@ -57,7 +54,7 @@ class UrlServiceImplTest {
 	void shouldNotSaveGetRedirectUrl_WhenShortCodeNotProvided() {
 		UrlCreationRequest request = new UrlCreationRequest("https://google.com", null, null);
 
-		Url initialUrl = new Url(null, "https://google.com", null, null, null, null);
+		Url initialUrl = new Url(null, "https://google.com", null, null, null, null, null);
 		Url savedUrl = Url.builder().id(123L).actualUrl("https://google.com").build();
 
 		when(repository.saveAndFlush(any(Url.class))).thenReturn(savedUrl);
