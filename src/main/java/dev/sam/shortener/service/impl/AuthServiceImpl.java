@@ -116,11 +116,6 @@ public class AuthServiceImpl implements AuthService {
 		return new TokenDto(generateToken(fromUser(user)), newRefreshToken);
 	}
 
-	private JwtCreationRequest getJwtCreationRequest(Long id, String username, Collection<? extends GrantedAuthority> authorities) {
-		Set<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-		return new JwtCreationRequest(id, username, roles);
-	}
-
 	private String generateToken(JwtCreationRequest request) {
 		try {
 			return jwtService.generateToken(request);

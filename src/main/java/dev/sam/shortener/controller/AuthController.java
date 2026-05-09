@@ -9,7 +9,6 @@ import dev.sam.shortener.dto.request.UserRegistrationRequest;
 import dev.sam.shortener.dto.response.AuthResponse;
 import dev.sam.shortener.service.AuthService;
 import dev.sam.shortener.util.CookieUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -20,8 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Instant;
 
 import static dev.sam.shortener.constant.AppConstant.REFRESH_TOKEN_COOKIE_NAME;
 import static dev.sam.shortener.constant.AppConstant.REFRESH_TOKEN_COOKIE_PATH;

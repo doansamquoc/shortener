@@ -2,7 +2,6 @@ package dev.sam.shortener.security.oauth2;
 
 import dev.sam.shortener.cache.AuthTemporaryCode;
 import dev.sam.shortener.config.AppProperties;
-import dev.sam.shortener.dto.CustomOAuth2User;
 import dev.sam.shortener.dto.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
