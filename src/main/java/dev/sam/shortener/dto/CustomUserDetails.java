@@ -37,7 +37,7 @@ public class CustomUserDetails implements UserDetails {
 		this.authorities = enrichAuthorities(user.getRoles());
 	}
 
-	public User creatUser() {
+	public User getUser() {
 		return User.builder().id(id).username(username).email(email).password(password).build();
 	}
 
