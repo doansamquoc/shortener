@@ -41,7 +41,7 @@ class UrlServiceImplTest {
 
 		when(repository.save(any(Url.class))).thenReturn(url);
 
-		UrlResponse response = service.create(request);
+		UrlResponse response = service.create(1L, request);
 
 		assertNotNull(response);
 		assertEquals("my-custom-link", response.shortenedUrl());
@@ -59,7 +59,7 @@ class UrlServiceImplTest {
 
 		when(repository.saveAndFlush(any(Url.class))).thenReturn(savedUrl);
 
-		UrlResponse response = service.create(request);
+		UrlResponse response = service.create(1L, request);
 
 		String expectedShortCode = Base62Encoder.encode(123L);
 
