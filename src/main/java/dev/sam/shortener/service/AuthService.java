@@ -11,7 +11,9 @@ public interface AuthService {
 
 	TokenDto register(UserRegistrationRequest request);
 
-	void logout(Jwt jwt);
+	void logout(Jwt jwt, String token);
 
 	TokenDto exchangeToken(ExchangeTokenRequest request);
+
+	TokenDto refreshToken(String token);
 }

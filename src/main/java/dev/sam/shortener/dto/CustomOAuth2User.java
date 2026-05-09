@@ -36,6 +36,10 @@ public class CustomOAuth2User implements OAuth2User, Serializable {
 		this.authorities = enrichAuthorities(user.getRoles());
 	}
 
+	public User createUser() {
+		return User.builder().id(id).username(username).email(email).password(password).build();
+	}
+
 	@Override
 	public @Nullable <A> A getAttribute(String name) {
 		return OAuth2User.super.getAttribute(name);

@@ -61,7 +61,7 @@ app:
 
   # Token second * minute * hour * day
   access-token-expiration: 900000 # 15 minutes
-  refresh-token-expiration: 604800 # 7 days
+  refresh-token-expiration: 1296000000 # 15 days
 
   auth-code-expiration: 60000 # 60 seconds
 

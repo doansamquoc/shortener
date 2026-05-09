@@ -1,3 +1,8 @@
 package dev.sam.shortener.dto;
 
-public record TokenDto(String accessToken) {}
+import dev.sam.shortener.entity.RefreshToken;
+
+public record TokenDto(
+String accessToken,
+RefreshToken refreshToken
+) {}
