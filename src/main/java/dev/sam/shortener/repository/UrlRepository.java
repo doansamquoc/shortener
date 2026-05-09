@@ -56,4 +56,6 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 	@Transactional
 	@Query("DELETE Url u WHERE u.lastClickAt < :threshold")
 	void cleanupUrls(@Param("threshold") Instant threshold);
+
+	Optional<Url> findByUserIdAndId(Long userId, Long id);
 }

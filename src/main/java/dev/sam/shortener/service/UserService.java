@@ -9,4 +9,6 @@ public interface UserService {
 	User findByIdentifier(String identifier);
 
 	User processOAuth2(String email);
+
+	User getReference(Long id);
 }

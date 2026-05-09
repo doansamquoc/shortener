@@ -12,6 +12,7 @@ import dev.sam.shortener.exception.AppException;
 import dev.sam.shortener.mapper.UrlMapper;
 import dev.sam.shortener.repository.UrlRepository;
 import dev.sam.shortener.service.UrlService;
+import dev.sam.shortener.service.UserService;
 import dev.sam.shortener.util.Base62Encoder;
 import jakarta.persistence.EntityManager;
 import lombok.AccessLevel;
@@ -33,14 +34,15 @@ import java.time.temporal.ChronoUnit;
 public class UrlServiceImpl implements UrlService {
 	UrlMapper mapper;
 	AppProperties props;
+	UserService userService;
 	UrlRepository repository;
 	EntityManager entityManager;
 
 	@Override
 	@Transactional
-	public UrlResponse create(UrlCreationRequest request) {
+	public UrlResponse create(Long userId, UrlCreationRequest request) {
 		Url url = mapper.toEntity(request);
-
+		url.setUser(userId==null?null:userService.getReference(userId));
 		// If user enter the short code, just save and return
 		if (request.shortCode() != null) return createShortCodeProvided(url);
 
@@ -58,8 +60,8 @@ public class UrlServiceImpl implements UrlService {
 	}
 
 	@Override
-	public UrlResponse update(Long id, UrlUpdateRequest request) {
-		Url url = findById(id);
+	public UrlResponse update(Long userId, Long id, UrlUpdateRequest request) {
+		Url url = findByUserIdAndId(userId, id);
 
 		if (request.shortCode() != null && !url.getShortCode().equals(request.shortCode()))
 			if (existsByShortCode(request.shortCode())) throw AppException.of(ErrorCode.URL_CODE_EXISTS);
@@ -134,6 +136,10 @@ public class UrlServiceImpl implements UrlService {
 
 	private Url findById(Long id) {
 		return repository.findById(id).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+	}
+
+	private Url findByUserIdAndId(Long userId, Long id) {
+		return repository.findByUserIdAndId(userId, id).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
 	}
 
 	private String findActualUrl(String shortCode) {

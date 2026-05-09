@@ -66,6 +66,11 @@ public class UserServiceImpl implements UserService {
 		return userSaved;
 	}
 
+	@Override
+	public User getReference(Long id) {
+		return repository.getReferenceById(id);
+	}
+
 	private boolean existsByEmail(String email) {
 		return repository.existsByEmail(email);
 	}

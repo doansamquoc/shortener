@@ -8,11 +8,11 @@ import dev.sam.shortener.entity.Url;
 import org.springframework.data.domain.Pageable;
 
 public interface UrlService {
-	UrlResponse create(UrlCreationRequest request);
+	UrlResponse create(Long userId, UrlCreationRequest request);
 
 	String getRedirectUrl(String shortCode);
 
-	UrlResponse update(Long id, UrlUpdateRequest request);
+	UrlResponse update(Long userId, Long id, UrlUpdateRequest request);
 
 	void delete(Long userId, Long id);
 
