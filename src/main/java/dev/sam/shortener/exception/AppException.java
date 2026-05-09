@@ -5,7 +5,6 @@ import dev.sam.shortener.enums.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.validation.FieldError;
 
 import java.util.Collections;
 import java.util.List;

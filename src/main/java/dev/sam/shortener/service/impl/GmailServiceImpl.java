@@ -3,7 +3,6 @@ package dev.sam.shortener.service.impl;
 import dev.sam.shortener.cache.MailRateLimit;
 import dev.sam.shortener.config.AppProperties;
 import dev.sam.shortener.dto.request.SendMailRequest;
-import dev.sam.shortener.dto.request.SendTemplateMailRequest;
 import dev.sam.shortener.enums.MailTemplate;
 import dev.sam.shortener.service.MailService;
 import jakarta.mail.MessagingException;
