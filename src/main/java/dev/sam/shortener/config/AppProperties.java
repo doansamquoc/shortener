@@ -24,6 +24,9 @@ public class AppProperties {
 	long authCodeExpiration;
 	String frontendRedirectUrl;
 
+	long forgotPasswordCodeExpiration;
+	long resetPasswordTokenExpiration;
+
 	@NestedConfigurationProperty
 	final SpringDoc springDoc = new SpringDoc();
 

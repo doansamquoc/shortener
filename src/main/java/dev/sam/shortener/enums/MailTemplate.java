@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum MailTemplate {
-	WELCOME("mails/welcome.html");
+	WELCOME("mails/welcome.html"),
+	FORGOT_PASSWORD("mails/forgot_password.html");
 	String path;
 }

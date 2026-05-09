@@ -3,10 +3,9 @@ package dev.sam.shortener.controller;
 import dev.sam.shortener.config.AppProperties;
 import dev.sam.shortener.dto.TokenDto;
 import dev.sam.shortener.dto.api.ApiResponse;
-import dev.sam.shortener.dto.request.ExchangeTokenRequest;
-import dev.sam.shortener.dto.request.LoginRequest;
-import dev.sam.shortener.dto.request.UserRegistrationRequest;
+import dev.sam.shortener.dto.request.*;
 import dev.sam.shortener.dto.response.AuthResponse;
+import dev.sam.shortener.dto.response.VerifyResetCodeResponse;
 import dev.sam.shortener.service.AuthService;
 import dev.sam.shortener.util.CookieUtils;
 import jakarta.servlet.http.HttpServletResponse;
@@ -83,6 +82,29 @@ public class AuthController {
 		TokenDto token = service.refreshToken(refreshTokenCookie);
 		AuthResponse response = authResponse(servletResponse, token);
 		return ResponseEntity.ok(ApiResponse.of(response));
+	}
+
+	@PostMapping("/forgot-password")
+	private ResponseEntity<ApiResponse<?>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+		service.forgotPassword(request.email());
+		return ResponseEntity.ok(ApiResponse.of("If the email valid, we'll send a verification email!"));
+	}
+
+	@PostMapping("/verify-reset-code")
+	private ResponseEntity<ApiResponse<VerifyResetCodeResponse>> verifyResetCode(
+	@Valid @RequestBody VerifyResetCodeRequest request
+	) {
+		VerifyResetCodeResponse response = service.verifyResetPasswordCode(request.email(), request.code());
+		return ResponseEntity.ok(ApiResponse.of(response));
+	}
+
+	@PatchMapping("/reset-password")
+	private ResponseEntity<ApiResponse<?>> resetPassword(
+	@RequestParam(name = "token", required = false) String token,
+	@Valid @RequestBody ResetPasswordRequest request
+	) {
+		service.resetPassword(token, request);
+		return ResponseEntity.ok(ApiResponse.of("Password reset successfully"));
 	}
 
 	private void addRefreshTokenCookie(HttpServletResponse servletResponse, String refreshToken) {

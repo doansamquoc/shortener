@@ -16,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -67,8 +68,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public Optional<User> findByEmail(String email) {
+		return repository.findByEmail(email);
+	}
+
+	@Override
 	public User getReference(Long id) {
 		return repository.getReferenceById(id);
+	}
+
+	@Override
+	public User save(User user) {
+		return repository.save(user);
 	}
 
 	private boolean existsByEmail(String email) {

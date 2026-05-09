@@ -2,23 +2,26 @@ package dev.sam.shortener.service.impl;
 
 import com.nimbusds.jose.JOSEException;
 import dev.sam.shortener.cache.AuthTemporaryCode;
+import dev.sam.shortener.cache.ForgotPasswordCache;
+import dev.sam.shortener.cache.ResetTokenCache;
 import dev.sam.shortener.cache.TokenBlacklist;
+import dev.sam.shortener.config.AppProperties;
 import dev.sam.shortener.dto.CustomOAuth2User;
 import dev.sam.shortener.dto.CustomUserDetails;
 import dev.sam.shortener.dto.TokenDto;
-import dev.sam.shortener.dto.request.ExchangeTokenRequest;
-import dev.sam.shortener.dto.request.JwtCreationRequest;
-import dev.sam.shortener.dto.request.LoginRequest;
-import dev.sam.shortener.dto.request.UserRegistrationRequest;
+import dev.sam.shortener.dto.request.*;
+import dev.sam.shortener.dto.response.VerifyResetCodeResponse;
 import dev.sam.shortener.entity.RefreshToken;
 import dev.sam.shortener.entity.User;
 import dev.sam.shortener.enums.ErrorCode;
+import dev.sam.shortener.event.ForgotPasswordEvent;
 import dev.sam.shortener.event.UserRegisteredEvent;
 import dev.sam.shortener.exception.AppException;
 import dev.sam.shortener.service.AuthService;
 import dev.sam.shortener.service.JwtService;
 import dev.sam.shortener.service.RefreshTokenService;
 import dev.sam.shortener.service.UserService;
+import dev.sam.shortener.util.Utils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -42,13 +46,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthServiceImpl implements AuthService {
-	AuthTemporaryCode authTemporaryCode;
+	AppProperties props;
 	JwtService jwtService;
 	UserService userService;
 	TokenBlacklist tokenBlacklist;
 	PasswordEncoder passwordEncoder;
+	ResetTokenCache resetTokenCache;
 	AuthenticationManager authManager;
+	AuthTemporaryCode authTemporaryCode;
 	ApplicationEventPublisher publisher;
+	ForgotPasswordCache forgotPasswordCache;
 	RefreshTokenService refreshTokenService;
 
 	private CustomUserDetails authenticate(String identifier, String password) throws AuthenticationException {
@@ -119,6 +126,48 @@ public class AuthServiceImpl implements AuthService {
 		RefreshToken newRefreshToken = refreshTokenService.create(user);
 
 		return new TokenDto(generateToken(fromUser(user)), newRefreshToken);
+	}
+
+	@Override
+	public void forgotPassword(String email) {
+		userService.findByEmail(email).ifPresent(u -> {
+			String code = Utils.generateCode();
+			long duration = System.currentTimeMillis() + props.getForgotPasswordCodeExpiration();
+			forgotPasswordCache.add(email, code, duration);
+			publisher.publishEvent(new ForgotPasswordEvent(u, code));
+		});
+	}
+
+	@Override
+	public VerifyResetCodeResponse verifyResetPasswordCode(String email, String code) {
+		String realCode = forgotPasswordCache.get(email);
+		if (code == null || !code.equals(realCode)) throw AppException.of(ErrorCode.RESET_CODE_INVALID);
+
+		forgotPasswordCache.remove(email);
+		String resetToken = UUID.randomUUID().toString();
+
+		long duration = System.currentTimeMillis() + props.getResetPasswordTokenExpiration();
+		resetTokenCache.add(resetToken, email, duration);
+		return new VerifyResetCodeResponse(resetToken);
+	}
+
+	@Override
+	public void resetPassword(String token, ResetPasswordRequest request) {
+		String email = resetTokenCache.get(token);
+		if (email == null) throw AppException.of(ErrorCode.RESET_CODE_INVALID);
+		userService.findByEmail(email).ifPresentOrElse(
+			user -> {
+				String hashedPassword = passwordEncoder.encode(request.password());
+				user.setPassword(hashedPassword);
+				userService.save(user);
+
+				resetTokenCache.remove(email);
+				refreshTokenService.revokeAll(user);
+			},
+			() -> {
+				throw AppException.of(ErrorCode.RESET_CODE_INVALID);
+			}
+		);
 	}
 
 	private String generateToken(JwtCreationRequest request) {

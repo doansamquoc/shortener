@@ -31,4 +31,9 @@ public class SendMailServiceImpl implements SendMailService {
 	public void sendWelcomeMail(String to, String subject, Map<String, Object> variables) {
 		mailService.sendTemplateMail(to, subject, MailTemplate.WELCOME, variables);
 	}
+
+	@Override
+	public void sendForotPasswordMail(String to, String subject, Map<String, Object> variables) {
+		mailService.sendTemplateMail(to, subject, MailTemplate.FORGOT_PASSWORD, variables);
+	}
 }

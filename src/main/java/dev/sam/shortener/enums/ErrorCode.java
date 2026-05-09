@@ -28,6 +28,8 @@ public enum ErrorCode {
 
 	// MAIL
 	MAIL_LIMITED(3001, "mail.limited", HttpStatus.TOO_MANY_REQUESTS.value()),
+
+	RESET_CODE_INVALID(6001, "reset.code.invalid", HttpStatus.BAD_REQUEST.value()),
 	;
 
 	// Error code

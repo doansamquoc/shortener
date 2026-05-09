@@ -1,5 +1,6 @@
 package dev.sam.shortener.event.listener;
 
+import dev.sam.shortener.event.ForgotPasswordEvent;
 import dev.sam.shortener.event.UserRegisteredEvent;
 import dev.sam.shortener.service.SendMailService;
 import lombok.AccessLevel;
@@ -24,7 +25,17 @@ public class UserEventListener {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("username", event.user().getUsername());
 		variables.put("link", "https://shortener.com");
-
 		sendMailService.sendWelcomeMail(to, subject, variables);
+	}
+
+	@EventListener
+	private void handleForgotPasswordEvent(ForgotPasswordEvent event) {
+		String to = event.user().getEmail();
+		String subject = "Forgot Password Request!";
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("username", event.user().getUsername());
+		variables.put("code", event.code());
+
+		sendMailService.sendForotPasswordMail(to, subject, variables);
 	}
 }
