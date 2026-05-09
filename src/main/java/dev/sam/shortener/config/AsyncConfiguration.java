@@ -24,4 +24,16 @@ public class AsyncConfiguration {
 		log.info("Click executor started...");
 		return executor;
 	}
+
+	@Bean(name = "mailExecutor")
+	public Executor mailExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(5);
+		executor.setMaxPoolSize(10);
+		executor.setQueueCapacity(50);
+		executor.setThreadNamePrefix("mail-");
+		executor.initialize();
+		log.info("Mail executor started...");
+		return executor;
+	}
 }

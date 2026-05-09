@@ -13,6 +13,7 @@ import dev.sam.shortener.dto.request.UserRegistrationRequest;
 import dev.sam.shortener.entity.RefreshToken;
 import dev.sam.shortener.entity.User;
 import dev.sam.shortener.enums.ErrorCode;
+import dev.sam.shortener.event.UserRegisteredEvent;
 import dev.sam.shortener.exception.AppException;
 import dev.sam.shortener.service.AuthService;
 import dev.sam.shortener.service.JwtService;
@@ -21,6 +22,7 @@ import dev.sam.shortener.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +34,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
 	TokenBlacklist tokenBlacklist;
 	PasswordEncoder passwordEncoder;
 	AuthenticationManager authManager;
+	ApplicationEventPublisher publisher;
 	RefreshTokenService refreshTokenService;
 
 	private CustomUserDetails authenticate(String identifier, String password) throws AuthenticationException {
@@ -62,10 +64,12 @@ public class AuthServiceImpl implements AuthService {
 	@Transactional
 	public TokenDto login(LoginRequest request) {
 		CustomUserDetails customUser = authenticate(request.identifier(), request.password());
+		User user = customUser.getUser();
 
-		User user = customUser.creatUser();
+		// Generate refresh token
 		RefreshToken refreshToken = refreshTokenService.create(user);
 
+		// Generate access token and return TokenDto
 		return new TokenDto(generateToken(fromCustomUser(customUser)), refreshToken);
 	}
 
@@ -78,6 +82,7 @@ public class AuthServiceImpl implements AuthService {
 		RefreshToken refreshToken = refreshTokenService.create(user);
 		String accessToken = generateToken(fromUser(user));
 
+		publisher.publishEvent(new UserRegisteredEvent(user));
 		return new TokenDto(accessToken, refreshToken);
 	}
 

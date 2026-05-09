@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ErrorCode {
+	// INTERNAL
 	SERVER_INTERNAL(5001, "server.internal", HttpStatus.INTERNAL_SERVER_ERROR.value()),
 
 	// AUTHENTICATION
@@ -21,8 +22,12 @@ public enum ErrorCode {
 	USER_USERNAME_EXISTS(2002, "user.username.exists", HttpStatus.CONFLICT.value()),
 	USER_NOT_FOUND(2003, "user.notfound", HttpStatus.NOT_FOUND.value()),
 
+	// URL
 	URL_CODE_EXISTS(1001, "url.short_code.exists", HttpStatus.CONFLICT.value()),
 	URL_NOT_FOUND(1002, "url.not_found", HttpStatus.NOT_FOUND.value()),
+
+	// MAIL
+	MAIL_LIMITED(3001, "mail.limited", HttpStatus.TOO_MANY_REQUESTS.value()),
 	;
 
 	// Error code

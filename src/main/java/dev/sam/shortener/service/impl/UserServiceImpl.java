@@ -4,6 +4,7 @@ import dev.sam.shortener.dto.request.UserRegistrationRequest;
 import dev.sam.shortener.entity.User;
 import dev.sam.shortener.entity.UserRole;
 import dev.sam.shortener.enums.ErrorCode;
+import dev.sam.shortener.event.UserRegisteredEvent;
 import dev.sam.shortener.exception.AppException;
 import dev.sam.shortener.mapper.UserMapper;
 import dev.sam.shortener.repository.UserRepository;
@@ -12,6 +13,7 @@ import dev.sam.shortener.util.UsernameUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -22,6 +24,7 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 	UserMapper mapper;
 	UserRepository repository;
+	ApplicationEventPublisher publisher;
 
 	@Override
 	public User create(UserRegistrationRequest request) {
@@ -58,7 +61,9 @@ public class UserServiceImpl implements UserService {
 		String username = UsernameUtils.generateUsername(email);
 		user.setUsername(username);
 
-		return repository.save(user);
+		User userSaved = repository.save(user);
+		publisher.publishEvent(new UserRegisteredEvent(userSaved));
+		return userSaved;
 	}
 
 	private boolean existsByEmail(String email) {

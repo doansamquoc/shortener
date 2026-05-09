@@ -22,11 +22,13 @@ public class AppProperties {
 	long refreshTokenExpiration;
 
 	long authCodeExpiration;
-
 	String frontendRedirectUrl;
 
 	@NestedConfigurationProperty
 	final SpringDoc springDoc = new SpringDoc();
+
+	@NestedConfigurationProperty
+	final Email email = new Email();
 
 	@Getter
 	@Setter
@@ -36,5 +38,15 @@ public class AppProperties {
 		String description;
 		String prodServer;
 		String version;
+	}
+
+	@Getter
+	@Setter
+	@FieldDefaults(level = AccessLevel.PRIVATE)
+	public static class Email {
+		String from;
+		String replyTo;
+		int limitPerAccount;
+		long limitDuration;
 	}
 }
