@@ -2,7 +2,7 @@ package dev.sam.shortener.security.oauth2;
 
 import dev.sam.shortener.cache.AuthTemporaryCode;
 import dev.sam.shortener.config.AppProperties;
-import dev.sam.shortener.dto.CustomUserDetails;
+import dev.sam.shortener.dto.CustomOAuth2User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -25,7 +25,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth) throws IOException {
-		CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
+		CustomOAuth2User user = (CustomOAuth2User) auth.getPrincipal();
 		String code = UUID.randomUUID().toString();
 		authTemporaryCode.add(code, user);
 
