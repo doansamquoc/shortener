@@ -1,4 +1,4 @@
-package dev.sam.shortener.security.oauth2;
+package dev.sam.shortener.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

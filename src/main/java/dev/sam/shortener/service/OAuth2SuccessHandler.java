@@ -1,4 +1,4 @@
-package dev.sam.shortener.security.oauth2;
+package dev.sam.shortener.service;
 
 import dev.sam.shortener.cache.AuthTemporaryCode;
 import dev.sam.shortener.config.AppProperties;
