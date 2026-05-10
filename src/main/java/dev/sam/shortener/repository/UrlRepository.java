@@ -27,11 +27,12 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 	@Query("UPDATE Url u SET u.totalClicks = u.totalClicks + 1, u.lastClickAt = CURRENT_TIMESTAMP WHERE u.shortCode = :shortCode")
 	void incrementTotalClicks(@Param("shortCode") String shortCode);
 
+	@Query("SELECT u FROM Url u WHERE (:userId IS NULL OR u.user.id = :userId)")
 	Page<Url> findAllByUserId(Long userId, Pageable pageable);
 
 	@Query("""
 		SELECT u FROM Url u
-		WHERE u.user.id = :userId
+		WHERE (:userId IS NULL OR u.user.id = :userId)
 		AND (function('word_similarity', :searchTerm, u.title) > :threshold
 		     OR function('word_similarity', :searchTerm, u.actualUrl) > :threshold)
 		ORDER BY function('greatest',
@@ -40,10 +41,10 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 		) DESC
 	""")
 	Page<Url> searchWordSimilarity(
-		@Param("userId") Long userId,
-		@Param("searchTerm") String searchTerm,
-		@Param("threshold") Double threshold,
-		Pageable pageable
+	@Param("userId") Long userId,
+	@Param("searchTerm") String searchTerm,
+	@Param("threshold") Double threshold,
+	Pageable pageable
 	);
 
 	@Transactional

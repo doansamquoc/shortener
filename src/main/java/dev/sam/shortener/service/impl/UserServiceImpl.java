@@ -14,6 +14,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -65,6 +67,21 @@ public class UserServiceImpl implements UserService {
 		User userSaved = repository.save(user);
 		publisher.publishEvent(new UserRegisteredEvent(userSaved));
 		return userSaved;
+	}
+
+	@Override
+	public Page<User> findAllUsers(Pageable pageable) {
+		return repository.findAll(pageable);
+	}
+
+	@Override
+	public Page<User> searchUsers(String searchTerm, Double threshold, Pageable pageable) {
+		return repository.findAll(searchTerm, threshold, pageable);
+	}
+
+	@Override
+	public void delete(Long id) {
+		repository.deleteById(id);
 	}
 
 	@Override

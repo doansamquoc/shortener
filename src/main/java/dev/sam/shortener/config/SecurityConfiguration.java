@@ -3,6 +3,7 @@ package dev.sam.shortener.config;
 import dev.sam.shortener.config.jwt.JwtAccessDeniedHandler;
 import dev.sam.shortener.config.jwt.JwtAuthenticationEntryPoint;
 import dev.sam.shortener.config.jwt.JwtConverter;
+import dev.sam.shortener.enums.Role;
 import dev.sam.shortener.service.OAuth2FailureHandler;
 import dev.sam.shortener.service.OAuth2SuccessHandler;
 import dev.sam.shortener.service.CustomOAuth2UserService;
@@ -46,6 +47,7 @@ public class SecurityConfiguration {
 		http.authorizeHttpRequests(auth -> {
 			auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
 			auth.requestMatchers(HttpMethod.POST, "/api/v1/urls").permitAll();
+			auth.requestMatchers(ADMIN_ENDPOINTS).hasAuthority(Role.ROLE_ADMIN.name());
 			auth.requestMatchers(SWAGGER_ENDPOINTS).permitAll();
 			auth.anyRequest().authenticated();
 		});

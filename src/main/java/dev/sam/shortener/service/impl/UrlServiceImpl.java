@@ -42,7 +42,7 @@ public class UrlServiceImpl implements UrlService {
 	@Transactional
 	public UrlResponse create(Long userId, UrlCreationRequest request) {
 		Url url = mapper.toEntity(request);
-		url.setUser(userId==null?null:userService.getReference(userId));
+		url.setUser(userId == null ? null : userService.getReference(userId));
 		// If user enter the short code, just save and return
 		if (request.shortCode() != null) return createShortCodeProvided(url);
 
@@ -95,12 +95,18 @@ public class UrlServiceImpl implements UrlService {
 
 	@Override
 	public PageResponse<UrlResponse> searchUrl(Long userId, String searchTerm, Pageable pageable) {
-		if (searchTerm == null || searchTerm.isBlank()) {
-			return PageResponse.from(repository.findAllByUserId(userId, pageable).map(mapper::toDto));
-		}
+		if (searchTerm.isBlank()) return PageResponse.from(repository.findAllByUserId(userId, pageable).map(mapper::toDto));
+		return PageResponse.from(findAll(userId, searchTerm, 0.3, pageable).map(mapper::toDto));
+	}
 
-		Page<Url> page = repository.searchWordSimilarity(userId, searchTerm, 0.3, pageable);
-		return PageResponse.from(page.map(mapper::toDto));
+	@Override
+	public Page<Url> findAll(Pageable pageable) {
+		return repository.findAll(pageable);
+	}
+
+	@Override
+	public Page<Url> findAll(Long userId, String searchTerm, Double threshold, Pageable pageable) {
+		return repository.searchWordSimilarity(userId, searchTerm, threshold, pageable);
 	}
 
 	@Override
