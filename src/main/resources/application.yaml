@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: Shortener
     version: 0.0.1
@@ -67,6 +69,11 @@ springdoc:
     enabled: true
   show-oauth2-endpoints: true
   show-actuator: true
+
+# Logging
+logging:
+  level:
+    org.springframework.boot.context.config: DEBUG
 
 # Application configuration properties
 app:
