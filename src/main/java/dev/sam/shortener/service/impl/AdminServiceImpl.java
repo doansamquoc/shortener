@@ -1,12 +1,9 @@
 package dev.sam.shortener.service.impl;
 
 import dev.sam.shortener.dto.api.PageResponse;
-import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.dto.response.UserDetailsResponse;
-import dev.sam.shortener.mapper.UrlMapper;
 import dev.sam.shortener.mapper.UserMapper;
 import dev.sam.shortener.service.AdminService;
-import dev.sam.shortener.service.UrlService;
 import dev.sam.shortener.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +17,6 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl implements AdminService {
 	UserService userService;
 	UserMapper userMapper;
-	UrlService urlService;
-	UrlMapper urlMapper;
 
 	@Override
 	public PageResponse<UserDetailsResponse> findAllUsers(String searchTerm, Double threshold, Pageable pageable) {

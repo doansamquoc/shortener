@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 import static dev.sam.shortener.constant.AppConstant.AUTHORIZE_CLAIM_NAME;
-import static dev.sam.shortener.constant.AppConstant.AUTHORIZE_PREFIX;
 
 @Component
 @RequiredArgsConstructor

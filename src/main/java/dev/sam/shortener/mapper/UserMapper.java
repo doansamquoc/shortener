@@ -6,11 +6,9 @@ import dev.sam.shortener.dto.response.UserResponse;
 import dev.sam.shortener.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
 	User toEntity(UserRegistrationRequest request);
-	UserResponse toDto(User user);
 	UserDetailsResponse toDetails(User user);
 }

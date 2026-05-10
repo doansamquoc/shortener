@@ -25,8 +25,6 @@ public interface UrlService {
 
 	PageResponse<UrlResponse> searchUrl(Long userId, String searchTerm, Pageable pageable);
 
-	Page<Url> findAll(Pageable pageable);
-
 	Page<Url> findAll(Long userId, String searchTerm, Double threshold, Pageable pageable);
 
 	UrlResponse getUrl(String shortCode);

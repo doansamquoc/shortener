@@ -4,7 +4,6 @@ import dev.sam.shortener.dto.api.ApiResponse;
 import dev.sam.shortener.dto.api.PageResponse;
 import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.dto.response.UserDetailsResponse;
-import dev.sam.shortener.dto.response.UserResponse;
 import dev.sam.shortener.service.AdminService;
 import dev.sam.shortener.service.UrlService;
 import lombok.AccessLevel;

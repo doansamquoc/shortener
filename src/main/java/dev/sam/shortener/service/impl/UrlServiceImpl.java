@@ -100,11 +100,6 @@ public class UrlServiceImpl implements UrlService {
 	}
 
 	@Override
-	public Page<Url> findAll(Pageable pageable) {
-		return repository.findAll(pageable);
-	}
-
-	@Override
 	public Page<Url> findAll(Long userId, String searchTerm, Double threshold, Pageable pageable) {
 		return repository.searchWordSimilarity(userId, searchTerm, threshold, pageable);
 	}
@@ -138,10 +133,6 @@ public class UrlServiceImpl implements UrlService {
 
 	private Url findByShortCode(String shortCode) {
 		return repository.findByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
-	}
-
-	private Url findById(Long id) {
-		return repository.findById(id).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
 	}
 
 	private Url findByUserIdAndId(Long userId, Long id) {
