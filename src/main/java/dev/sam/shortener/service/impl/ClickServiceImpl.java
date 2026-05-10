@@ -1,6 +1,8 @@
 package dev.sam.shortener.service.impl;
 
+import dev.sam.shortener.dto.api.PageResponse;
 import dev.sam.shortener.dto.request.ClickRequest;
+import dev.sam.shortener.dto.response.ClickResponse;
 import dev.sam.shortener.entity.Click;
 import dev.sam.shortener.entity.Url;
 import dev.sam.shortener.mapper.ClickMapper;
@@ -12,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +48,13 @@ public class ClickServiceImpl implements ClickService {
 		log.info(click.toString());
 		save(click);
 	}
+
+	@Override
+	public PageResponse<ClickResponse> findAll(Long urlId, String searchTerm, Double threshold, Pageable pageable) {
+		if (searchTerm.isBlank()) return PageResponse.from(repository.findAllByUrlId(urlId, pageable).map(mapper::toDto));
+		return PageResponse.from(repository.search(urlId, searchTerm, threshold, pageable).map(mapper::toDto));
+	}
+
 
 	private Click save(Click click) {
 		return repository.save(click);

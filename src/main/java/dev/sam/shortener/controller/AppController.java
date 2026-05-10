@@ -25,7 +25,7 @@ public class AppController {
 	UrlService service;
 	ApplicationEventPublisher publisher;
 
-	@GetMapping("/redirect/{shortCode}")
+	@GetMapping("/{shortCode}")
 	public ResponseEntity<Void> redirect(@PathVariable String shortCode, HttpServletRequest request) {
 		String url = service.getRedirectUrl(shortCode);
 		ClickRequest clickRequest = makeRequest(request);
