@@ -60,6 +60,10 @@ spring:
           starttls:
             enable: true
 
+  messages:
+    use-code-as-default-message: true
+    encoding: UTF-8
+
 # SpringDoc OpenAPI/Swagger
 springdoc:
   api-docs:
