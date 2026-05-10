@@ -7,9 +7,11 @@ import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.entity.Url;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface UrlService {
-	UrlResponse create(Long userId, UrlCreationRequest request);
+	@Transactional
+	UrlResponse create(Long userId, String ipAddress, UrlCreationRequest request);
 
 	String getRedirectUrl(String shortCode);
 

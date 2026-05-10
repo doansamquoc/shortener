@@ -83,6 +83,10 @@ app:
 
   frontend-redirect-url: http://localhost:5173/oauth2/redirect
 
+  # Url
+  create-url-limit: 5
+  create-url-limit-duration: 60000
+
   # SpringDoc-OpenAPI
   spring-doc:
     title: Shortener API Document

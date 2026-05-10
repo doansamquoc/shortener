@@ -7,6 +7,7 @@ import dev.sam.shortener.dto.request.UrlCreationRequest;
 import dev.sam.shortener.dto.request.UrlUpdateRequest;
 import dev.sam.shortener.dto.response.UrlResponse;
 import dev.sam.shortener.service.UrlService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,11 @@ public class UrlController {
 	@PostMapping
 	ResponseEntity<ApiResponse<UrlResponse>> create(
 	@Valid @RequestBody UrlCreationRequest request,
+	HttpServletRequest servletRequest,
 	@AuthenticationPrincipal Jwt jwt
 	) {
 		Long userId = jwt == null ? null : Long.valueOf(jwt.getSubject());
-		UrlResponse response = service.create(userId, request);
+		UrlResponse response = service.create(userId, servletRequest.getRemoteAddr(), request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.of(response));
 	}
 

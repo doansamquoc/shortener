@@ -25,6 +25,7 @@ public enum ErrorCode {
 	// URL
 	URL_CODE_EXISTS(1001, "url.short_code.exists", HttpStatus.CONFLICT.value()),
 	URL_NOT_FOUND(1002, "url.not_found", HttpStatus.NOT_FOUND.value()),
+	URL_LIMITED(1003, "url.limited", HttpStatus.TOO_MANY_REQUESTS.value()),
 
 	// MAIL
 	MAIL_LIMITED(3001, "mail.limited", HttpStatus.TOO_MANY_REQUESTS.value()),

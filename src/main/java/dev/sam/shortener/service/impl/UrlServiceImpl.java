@@ -1,5 +1,6 @@
 package dev.sam.shortener.service.impl;
 
+import dev.sam.shortener.cache.CreateUrlRateLimit;
 import dev.sam.shortener.config.AppProperties;
 import dev.sam.shortener.constant.CacheNames;
 import dev.sam.shortener.dto.api.PageResponse;
@@ -32,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UrlServiceImpl implements UrlService {
+	CreateUrlRateLimit createUrlRateLimit;
 	UrlMapper mapper;
 	AppProperties props;
 	UserService userService;
@@ -40,7 +42,11 @@ public class UrlServiceImpl implements UrlService {
 
 	@Override
 	@Transactional
-	public UrlResponse create(Long userId, UrlCreationRequest request) {
+	public UrlResponse create(Long userId, String ipAddress, UrlCreationRequest request) {
+		// Validate limit
+		String key = ipAddress + ":" + request.actualUrl();
+		if (createUrlRateLimit.isLimited(key)) throw AppException.of(ErrorCode.URL_LIMITED);
+
 		Url url = mapper.toEntity(request);
 		url.setUser(userId == null ? null : userService.getReference(userId));
 		// If user enter the short code, just save and return
@@ -49,6 +55,10 @@ public class UrlServiceImpl implements UrlService {
 		Long nextId = getNextId();
 		String shortCode = Base62Encoder.encode(nextId);
 		url.setShortCode(shortCode);
+
+		// Add cache
+		long duration = System.currentTimeMillis() + props.getCreateUrlLimitDuration();
+		createUrlRateLimit.add(key, duration);
 		return mapper.toDto(save(url));
 	}
 
