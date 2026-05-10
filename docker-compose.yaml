@@ -40,6 +40,16 @@ services:
     volumes:
       - shortener-redis-insight:/data
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8008:8080"
+    depends_on:
+      - shortener-db
+      - shortener-cache
+
 volumes:
   shortener-db-data:
   shortener-cache-data:
