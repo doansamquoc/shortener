@@ -24,5 +24,5 @@ public interface UserService {
 
 	User getReference(Long id);
 
-	User save(User user);
+	void save(User user);
 }
