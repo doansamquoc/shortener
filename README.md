@@ -66,3 +66,4 @@ Simply click run in your IDE. If you use Docker, please start docker first.
 - Health Check: http://localhost:8080/actuator/health
 4. Online Demo
 - Swagger UI: https://shortener-wz64.onrender.com/swagger-ui/index.html
+  *You may have to wait for Render to start :D*
