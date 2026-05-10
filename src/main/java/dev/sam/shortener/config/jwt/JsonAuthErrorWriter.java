@@ -1,7 +1,6 @@
 package dev.sam.shortener.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.java.accessibility.util.Translator;
 import dev.sam.shortener.config.TranslateMessageService;
 import dev.sam.shortener.enums.ErrorCode;
 import dev.sam.shortener.exception.ErrorResponse;
