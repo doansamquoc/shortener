@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import static dev.sam.shortener.constant.CacheNames.URL_LIMIT;
@@ -24,10 +25,10 @@ public class CreateUrlRateLimitImpl implements CreateUrlRateLimit {
 	 * @param duration long
 	 */
 	@Override
-	public void add(String key, long duration) {
+	public void add(String key, Duration duration) {
 		key = URL_LIMIT + key;
 		Long count = template.opsForValue().increment(key);
-		if (count != null && count == 1) template.expire(key, duration, TimeUnit.MILLISECONDS);
+		if (count != null && count == 1) template.expire(key, duration);
 	}
 
 	@Override

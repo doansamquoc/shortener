@@ -26,6 +26,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -57,8 +58,7 @@ public class UrlServiceImpl implements UrlService {
 		url.setShortCode(shortCode);
 
 		// Add cache
-		long duration = System.currentTimeMillis() + props.getCreateUrlLimitDuration();
-		createUrlRateLimit.add(key, duration);
+		createUrlRateLimit.add(key, Duration.ofMillis(props.getCreateUrlLimitDuration()));
 		return mapper.toDto(save(url));
 	}
 
