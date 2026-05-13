@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -35,6 +36,19 @@ public class GlobalExceptionHandler {
 		String message = translator.of(ec.getKey(), null, locale);
 		ErrorResponse response = ErrorResponse.of(ec.getStatus(), ec.getCode(), message, fieldViolations);
 
+		return ResponseEntity.status(ec.getStatus()).body(response);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, Locale locale) {
+		List<FieldViolation> violations =  e.getBindingResult().getFieldErrors().stream().map(f -> {
+			String message = translator.of(f.getDefaultMessage(), null, locale);
+			return new FieldViolation(f.getField(), message);
+		}).toList();
+
+		ErrorCode ec = ErrorCode.VALIDATION_FAILED;
+		String message = translator.of(ec.getKey(), null, locale);
+		ErrorResponse response = ErrorResponse.of(ec.getStatus(), ec.getCode(), message, violations);
 		return ResponseEntity.status(ec.getStatus()).body(response);
 	}
 
