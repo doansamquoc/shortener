@@ -34,122 +34,126 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UrlServiceImpl implements UrlService {
-	CreateUrlRateLimit createUrlRateLimit;
-	UrlMapper mapper;
-	AppProperties props;
-	UserService userService;
-	UrlRepository repository;
-	EntityManager entityManager;
-
-	@Override
-	@Transactional
-	public UrlResponse create(Long userId, String ipAddress, UrlCreationRequest request) {
-		// Validate limit
-		String key = ipAddress + ":" + request.actualUrl();
-		if (createUrlRateLimit.isLimited(key)) throw AppException.of(ErrorCode.URL_LIMITED);
-
-		Url url = mapper.toEntity(request);
-		url.setUser(userId == null ? null : userService.getReference(userId));
-		// If user enter the short code, just save and return
-		if (request.shortCode() != null) return createShortCodeProvided(url);
-
-		Long nextId = getNextId();
-		String shortCode = Base62Encoder.encode(nextId);
-		url.setShortCode(shortCode);
-
-		// Add cache
-		createUrlRateLimit.add(key, Duration.ofMillis(props.getCreateUrlLimitDuration()));
-		return mapper.toDto(save(url));
-	}
-
-	@Override
-	@Cacheable(value = CacheNames.URL_SHORT, key = "#shortCode")
-	public String getRedirectUrl(String shortCode) {
-		if (shortCode == null) return "/not-found";
-		return findActualUrl(shortCode);
-	}
-
-	@Override
-	public UrlResponse update(Long userId, Long id, UrlUpdateRequest request) {
-		Url url = findByUserIdAndId(userId, id);
-
-		if (request.shortCode() != null && !url.getShortCode().equals(request.shortCode()))
-			if (existsByShortCode(request.shortCode())) throw AppException.of(ErrorCode.URL_CODE_EXISTS);
-
-		mapper.toEntity(request, url);
-		return mapper.toDto(save(url));
-	}
-
-	@Override
-	public void delete(Long userId, Long id) {
-		repository.deleteByUserIdAndId(userId, id);
-	}
-
-	@Override
-	public void deleteAll(Long userId) {
-		repository.deleteAllByUserId(userId);
-	}
-
-	@Override
-	public void cleanupUrls() {
-		int days = props.getCleanupUrlsAfterDays();
-		Instant threshold = Instant.now().minus(days, ChronoUnit.DAYS);
-		repository.cleanupUrls(threshold);
-	}
-
-	@Override
-	@Async("clickExecutor")
-	public void incrementTotalClicks(String shortCode) {
-		repository.incrementTotalClicks(shortCode);
-	}
-
-	@Override
-	public PageResponse<UrlResponse> searchUrl(Long userId, String searchTerm, Pageable pageable) {
-		if (searchTerm.isBlank()) return PageResponse.from(repository.findAllByUserId(userId, pageable).map(mapper::toDto));
-		return PageResponse.from(findAll(userId, searchTerm, 0.3, pageable).map(mapper::toDto));
-	}
-
-	@Override
-	public Page<Url> findAll(Long userId, String searchTerm, Double threshold, Pageable pageable) {
-		return repository.searchWordSimilarity(userId, searchTerm, threshold, pageable);
-	}
-
-	@Override
-	public UrlResponse getUrl(String shortCode) {
-		return mapper.toDto(findByShortCode(shortCode));
-	}
-
-	@Override
-	public Url getReference(Long id) {
-		return repository.getReferenceById(id);
-	}
-
-	private UrlResponse createShortCodeProvided(Url url) {
-		if (!existsByShortCode(url.getShortCode())) return mapper.toDto(save(url));
-		throw AppException.of(ErrorCode.URL_CODE_EXISTS);
-	}
-
-	private Url save(Url url) {
-		return repository.save(url);
-	}
-
-	private Long getNextId() {
-		return (Long) entityManager.createNativeQuery("SELECT nextVal('urls_id_seq')").getSingleResult();
-	}
-
-	private boolean existsByShortCode(String shortCode) {
-		return repository.existsByShortCode(shortCode);
-	}
-
-	private Url findByShortCode(String shortCode) {
-		return repository.findByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
-	}
-
-	private Url findByUserIdAndId(Long userId, Long id) {
-		return repository.findByUserIdAndId(userId, id).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
-	}
-
-	private String findActualUrl(String shortCode) {
-		return repository.findActualUrlByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
-	}
+    CreateUrlRateLimit createUrlRateLimit;
+    UrlMapper mapper;
+    AppProperties props;
+    UserService userService;
+    UrlRepository repository;
+    EntityManager entityManager;
+    
+    @Override
+    @Transactional
+    public UrlResponse create(Long userId, String ipAddress, UrlCreationRequest request) {
+        // Validate limit
+        String key = ipAddress + ":" + request.actualUrl();
+        if (createUrlRateLimit.isLimited(key)) throw AppException.of(ErrorCode.URL_LIMITED);
+        
+        Url url = mapper.toEntity(request);
+        url.setUser(userId == null ? null : userService.getReference(userId));
+        // If user enter the short code, just save and return
+        if (request.shortCode() != null) return createShortCodeProvided(url);
+        
+        Long nextId = getNextId();
+        String shortCode = Base62Encoder.encode(nextId);
+        url.setShortCode(shortCode);
+        
+        // Add cache
+        createUrlRateLimit.add(key, Duration.ofMillis(props.getCreateUrlLimitDuration()));
+        return mapper.toDto(save(url));
+    }
+    
+    @Override
+    @Cacheable(value = CacheNames.URL_SHORT, key = "#shortCode")
+    public String getRedirectUrl(String shortCode) {
+        if (shortCode == null) return "/not-found";
+        return findActualUrl(shortCode);
+    }
+    
+    @Override
+    public UrlResponse update(Long userId, Long id, UrlUpdateRequest request) {
+        Url url = findByUserIdAndId(userId, id);
+        
+        if (request.shortCode() != null && !url.getShortCode().equals(request.shortCode())) {
+            if (existsByShortCode(request.shortCode())) throw AppException.of(ErrorCode.URL_CODE_EXISTS);
+        }
+        
+        mapper.toEntity(request, url);
+        return mapper.toDto(save(url));
+    }
+    
+    @Override
+    public void delete(Long userId, Long id) {
+        repository.deleteByUserIdAndId(userId, id);
+    }
+    
+    @Override
+    public void deleteAll(Long userId) {
+        repository.deleteAllByUserId(userId);
+    }
+    
+    @Override
+    public void cleanupUrls() {
+        int days = props.getCleanupUrlsAfterDays();
+        Instant threshold = Instant.now().minus(days, ChronoUnit.DAYS);
+        repository.cleanupUrls(threshold);
+    }
+    
+    @Override
+    @Async("clickExecutor")
+    public void incrementTotalClicks(String shortCode) {
+        repository.incrementTotalClicks(shortCode);
+    }
+    
+    @Override
+    public PageResponse<UrlResponse> searchUrl(Long userId, String searchTerm, Pageable pageable) {
+        if (searchTerm.isBlank()) {
+            return PageResponse.from(repository.findAllByUserId(userId, pageable).map(mapper::toDto));
+        }
+        return PageResponse.from(findAll(userId, searchTerm, 0.3, pageable).map(mapper::toDto));
+    }
+    
+    @Override
+    public Page<Url> findAll(Long userId, String searchTerm, Double threshold, Pageable pageable) {
+        return repository.searchWordSimilarity(userId, searchTerm, threshold, pageable);
+    }
+    
+    @Override
+    public UrlResponse getUrl(String shortCode) {
+        return mapper.toDto(findByShortCode(shortCode));
+    }
+    
+    @Override
+    public Url getReference(Long id) {
+        return repository.getReferenceById(id);
+    }
+    
+    private UrlResponse createShortCodeProvided(Url url) {
+        if (!existsByShortCode(url.getShortCode())) return mapper.toDto(save(url));
+        throw AppException.of(ErrorCode.URL_CODE_EXISTS);
+    }
+    
+    private Url save(Url url) {
+        return repository.save(url);
+    }
+    
+    private Long getNextId() {
+        return (Long) entityManager.createNativeQuery("SELECT nextVal('urls_id_seq')").getSingleResult();
+    }
+    
+    private boolean existsByShortCode(String shortCode) {
+        return repository.existsByShortCode(shortCode);
+    }
+    
+    private Url findByShortCode(String shortCode) {
+        return repository.findByShortCode(shortCode).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+    }
+    
+    private Url findByUserIdAndId(Long userId, Long id) {
+        return repository.findByUserIdAndId(userId, id).orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+    }
+    
+    private String findActualUrl(String shortCode) {
+        return repository.findActualUrlByShortCode(shortCode)
+                         .orElseThrow(() -> AppException.of(ErrorCode.URL_NOT_FOUND));
+    }
 }

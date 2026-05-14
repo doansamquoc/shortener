@@ -20,11 +20,11 @@ public class AsyncConfiguration {
 		executor.setQueueCapacity(50);
 		executor.setThreadNamePrefix("click-");
 		executor.initialize();
-
+		
 		log.info("Click executor started...");
 		return executor;
 	}
-
+	
 	@Bean(name = "mailExecutor")
 	public Executor mailExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

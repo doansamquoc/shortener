@@ -12,8 +12,9 @@ import java.util.Locale;
 @RequiredArgsConstructor()
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TranslateMessageService {
-	MessageSource messageSource;
-	public String of(String key, Object[] args, Locale locale) {
-		return messageSource.getMessage(key, args, locale);
-	}
+    MessageSource messageSource;
+    
+    public String of(String key, Object[] args, Locale locale) {
+        return messageSource.getMessage(key, args, locale);
+    }
 }

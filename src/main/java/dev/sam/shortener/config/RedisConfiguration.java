@@ -25,47 +25,46 @@ import java.util.Map;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RedisConfiguration {
-	@Bean
-	public GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer() {
-		return new GenericJackson2JsonRedisSerializer().configure(mapper -> {
-			mapper.registerModule(new JavaTimeModule());
-
-			// Handler SimpleGrantedAuthority deserialize
-			mapper.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class);
-			mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		});
-	}
-
-	@Bean
-	public RedisCacheConfiguration redisCacheConfiguration(GenericJackson2JsonRedisSerializer serializer) {
-		return RedisCacheConfiguration.defaultCacheConfig()
-		.entryTtl(Duration.ofMinutes(60))
-		.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-		.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
-	}
-
-	@Bean
-	public RedisCacheManager redisCacheManager(RedisConnectionFactory factory, RedisCacheConfiguration config) {
-		Map<String, RedisCacheConfiguration> cache = new HashMap<>();
-		cache.put(CacheNames.URL_SHORT, config.entryTtl(Duration.ofHours(2)));
-		return RedisCacheManager.builder(factory).cacheDefaults(config).withInitialCacheConfigurations(cache).build();
-	}
-
-	@Bean
-	public RedisTemplate<String, Object> redisTemplate(
-	RedisConnectionFactory factory,
-	GenericJackson2JsonRedisSerializer serializer
-	) {
-		RedisTemplate<String, Object> template = new RedisTemplate<>();
-		template.setConnectionFactory(factory);
-
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setHashKeySerializer(new StringRedisSerializer());
-
-		template.setValueSerializer(serializer);
-		template.setHashValueSerializer(serializer);
-
-		template.afterPropertiesSet();
-		return template;
-	}
+    @Bean
+    public GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer().configure(mapper -> {
+            mapper.registerModule(new JavaTimeModule());
+            
+            // Handler SimpleGrantedAuthority deserialize
+            mapper.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class);
+            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        });
+    }
+    
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration(GenericJackson2JsonRedisSerializer serializer) {
+        return RedisCacheConfiguration.defaultCacheConfig()
+                                      .entryTtl(Duration.ofMinutes(60))
+                                      .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                                      .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+                                          serializer
+                                      ));
+    }
+    
+    @Bean
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory factory, RedisCacheConfiguration config) {
+        Map<String, RedisCacheConfiguration> cache = new HashMap<>();
+        cache.put(CacheNames.URL_SHORT, config.entryTtl(Duration.ofHours(2)));
+        return RedisCacheManager.builder(factory).cacheDefaults(config).withInitialCacheConfigurations(cache).build();
+    }
+    
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(
+        RedisConnectionFactory factory,
+        GenericJackson2JsonRedisSerializer serializer
+    ) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>(); template.setConnectionFactory(factory);
+        
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        
+        template.setValueSerializer(serializer); template.setHashValueSerializer(serializer);
+        
+        template.afterPropertiesSet(); return template;
+    }
 }

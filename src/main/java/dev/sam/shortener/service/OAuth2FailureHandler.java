@@ -13,10 +13,17 @@ import java.util.Objects;
 
 @Component
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
-	@Override
-	public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse res, AuthenticationException e) throws IOException {
-		String targetUrl = Objects.requireNonNull(WebUtils.getCookie(req, "redirect_uri")).getValue();
-		targetUrl = UriComponentsBuilder.fromUriString(targetUrl).queryParam("error", e.getLocalizedMessage()).build().toUriString();
-		getRedirectStrategy().sendRedirect(req, res, targetUrl);
-	}
+    @Override
+    public void onAuthenticationFailure(
+        HttpServletRequest req,
+        HttpServletResponse res,
+        AuthenticationException e
+    ) throws IOException {
+        String targetUrl = Objects.requireNonNull(WebUtils.getCookie(req, "redirect_uri")).getValue();
+        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+                                        .queryParam("error", e.getLocalizedMessage())
+                                        .build()
+                                        .toUriString();
+        getRedirectStrategy().sendRedirect(req, res, targetUrl);
+    }
 }

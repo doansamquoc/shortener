@@ -15,17 +15,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminServiceImpl implements AdminService {
-	UserService userService;
-	UserMapper userMapper;
-
-	@Override
-	public PageResponse<UserDetailsResponse> findAllUsers(String searchTerm, Double threshold, Pageable pageable) {
-		if (searchTerm.isBlank()) return PageResponse.from(userService.findAllUsers(pageable).map(userMapper::toDetails));
-		return PageResponse.from(userService.searchUsers(searchTerm, threshold, pageable).map(userMapper::toDetails));
-	}
-
-	@Override
-	public void deleteUser(Long userId) {
-		userService.delete(userId);
-	}
+    UserService userService;
+    UserMapper userMapper;
+    
+    @Override
+    public PageResponse<UserDetailsResponse> findAllUsers(String searchTerm, Double threshold, Pageable pageable) {
+        if (searchTerm.isBlank()) {
+            return PageResponse.from(userService.findAllUsers(pageable).map(userMapper::toDetails));
+        }
+        return PageResponse.from(userService.searchUsers(searchTerm, threshold, pageable).map(userMapper::toDetails));
+    }
+    
+    @Override
+    public void deleteUser(Long userId) {
+        userService.delete(userId);
+    }
 }

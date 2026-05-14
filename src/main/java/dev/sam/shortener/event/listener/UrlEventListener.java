@@ -17,14 +17,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UrlEventListener {
-	UrlService urlService;
-	ClickService clickService;
-
-	@EventListener
-	@Async("clickExecutor")
-	public void handleUrlClicked(UrlClickedEvent event) {
-		UrlResponse response = urlService.getUrl(event.shortCode());
-		urlService.incrementTotalClicks(event.shortCode());
-		clickService.create(response.id(), event.request());
-	}
+    UrlService urlService;
+    ClickService clickService;
+    
+    @EventListener
+    @Async("clickExecutor")
+    public void handleUrlClicked(UrlClickedEvent event) {
+        UrlResponse response = urlService.getUrl(event.shortCode());
+        urlService.incrementTotalClicks(event.shortCode());
+        clickService.create(response.id(), event.request());
+    }
 }

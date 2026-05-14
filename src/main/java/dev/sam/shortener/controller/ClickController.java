@@ -20,15 +20,15 @@ import static dev.sam.shortener.constant.EndpointConstant.V1;
 @RequestMapping(V1 + "/clicks")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ClickController {
-	ClickService service;
-
-	@GetMapping("/{urlId}")
-	ResponseEntity<ApiResponse<PageResponse<ClickResponse>>> findAll(
-	@PathVariable Long urlId,
-	@RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
-	@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-	) {
-		PageResponse<ClickResponse> response = service.findAll(urlId, searchTerm, 0.3, pageable);
-		return ResponseEntity.ok(ApiResponse.of(response));
-	}
+    ClickService service;
+    
+    @GetMapping("/{urlId}")
+    ResponseEntity<ApiResponse<PageResponse<ClickResponse>>> findAll(
+        @PathVariable Long urlId,
+        @RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
+        @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        PageResponse<ClickResponse> response = service.findAll(urlId, searchTerm, 0.3, pageable);
+        return ResponseEntity.ok(ApiResponse.of(response));
+    }
 }

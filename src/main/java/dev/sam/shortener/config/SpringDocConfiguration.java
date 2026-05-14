@@ -15,19 +15,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SpringDocConfiguration {
-	AppProperties prop;
-
-	@Bean
-	OpenAPI openAPI() {
-		return new OpenAPI().info(
-		new Info().title(prop.getSpringDoc().getTitle())
-		.description(prop.getSpringDoc().getDescription())
-		.version(prop.getSpringDoc().getVersion())
-		).servers(
-		List.of(
-		new Server().url("http://localhost:8080").description("LOCAL"),
-		new Server().url(prop.getSpringDoc().getProdServer()).description("PROD")
-		)
-		);
-	}
+    AppProperties prop;
+    
+    @Bean
+    OpenAPI openAPI() {
+        return new OpenAPI().info(
+            new Info().title(prop.getSpringDoc().getTitle()).description(prop.getSpringDoc().getDescription())
+                      .version(prop.getSpringDoc().getVersion())
+        ).servers(
+            List.of(
+                new Server().url("http://localhost:8080").description("LOCAL"),
+                new Server().url(prop.getSpringDoc().getProdServer()).description("PROD")
+            )
+        );
+    }
 }

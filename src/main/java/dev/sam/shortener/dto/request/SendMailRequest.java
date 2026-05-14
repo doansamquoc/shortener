@@ -9,10 +9,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SendMailRequest {
-	String to;
-	String cc;
-	String bcc;
-	String subject;
-	String body;
-	boolean html;
+    String to;
+    String cc;
+    String bcc;
+    String subject;
+    String body;
+    boolean html;
 }

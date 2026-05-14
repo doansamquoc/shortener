@@ -22,32 +22,32 @@ import static dev.sam.shortener.constant.AppConstant.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JwtServiceImpl implements JwtService {
-	AppProperties props;
-	SecretKey secretKey;
-
-	@Override
-	public String generateToken(JwtCreationRequest request) throws JOSEException {
-		JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-		Payload payload = generatePayload(request);
-		JWSObject jwsObject = new JWSObject(header, payload);
-		jwsObject.sign(new MACSigner(secretKey));
-		return jwsObject.serialize();
-	}
-
-	private Payload generatePayload(JwtCreationRequest request) {
-		Date issueTime = new Date();
-		Date expirationTime = new Date(System.currentTimeMillis() + props.getAccessTokenExpiration());
-
-		JWTClaimsSet claims = new JWTClaimsSet.Builder()
-		.issuer("URL Shortener API")
-		.subject(String.valueOf(request.id()))
-		.issueTime(issueTime)
-		.expirationTime(expirationTime)
-		.jwtID(UUID.randomUUID().toString())
-		.claim(AUTHORIZE_CLAIM_NAME, request.roles())
-		.claim(JWT_USERNAME_CLAIM_NAME, request.username())
-		.build();
-
-		return new Payload(claims.toJSONObject());
-	}
+    AppProperties props;
+    SecretKey secretKey;
+    
+    @Override
+    public String generateToken(JwtCreationRequest request) throws JOSEException {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+        Payload payload = generatePayload(request);
+        JWSObject jwsObject = new JWSObject(header, payload);
+        jwsObject.sign(new MACSigner(secretKey));
+        return jwsObject.serialize();
+    }
+    
+    private Payload generatePayload(JwtCreationRequest request) {
+        Date issueTime = new Date();
+        Date expirationTime = new Date(System.currentTimeMillis() + props.getAccessTokenExpiration());
+        
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+            .issuer("URL Shortener API")
+            .subject(String.valueOf(request.id()))
+            .issueTime(issueTime)
+            .expirationTime(expirationTime)
+            .jwtID(UUID.randomUUID().toString())
+            .claim(AUTHORIZE_CLAIM_NAME, request.roles())
+            .claim(JWT_USERNAME_CLAIM_NAME, request.username())
+            .build();
+        
+        return new Payload(claims.toJSONObject());
+    }
 }

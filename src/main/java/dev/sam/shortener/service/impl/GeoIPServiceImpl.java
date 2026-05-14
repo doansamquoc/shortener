@@ -14,16 +14,16 @@ import java.net.InetAddress;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GeoIPServiceImpl implements CountryCodeService {
-	DatabaseReader reader;
-
-	@Override
-	public String getCountryCode(String ip) {
-		try {
-			InetAddress ipAddress = InetAddress.getByName(ip);
-			CountryResponse response = reader.country(ipAddress);
-			return response.country().isoCode();
-		} catch (Exception e) {
-			return "Unknown";
-		}
-	}
+    DatabaseReader reader;
+    
+    @Override
+    public String getCountryCode(String ip) {
+        try {
+            InetAddress ipAddress = InetAddress.getByName(ip);
+            CountryResponse response = reader.country(ipAddress);
+            return response.country().isoCode();
+        } catch (Exception e) {
+            return "Unknown";
+        }
+    }
 }

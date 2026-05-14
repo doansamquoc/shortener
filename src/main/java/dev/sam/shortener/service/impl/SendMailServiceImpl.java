@@ -18,22 +18,22 @@ import java.util.Map;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SendMailServiceImpl implements SendMailService {
-	MailService mailService;
-	MailRateLimit mailRateLimit;
-
-	@Override
-	public void sendSimpleMail(SendMailRequest request) {
-		if (mailRateLimit.isLimited(request.getTo())) throw AppException.of(ErrorCode.MAIL_LIMITED);
-		mailService.sendSimpleMail(request);
-	}
-
-	@Override
-	public void sendWelcomeMail(String to, String subject, Map<String, Object> variables) {
-		mailService.sendTemplateMail(to, subject, MailTemplate.WELCOME, variables);
-	}
-
-	@Override
-	public void sendForotPasswordMail(String to, String subject, Map<String, Object> variables) {
-		mailService.sendTemplateMail(to, subject, MailTemplate.FORGOT_PASSWORD, variables);
-	}
+    MailService mailService;
+    MailRateLimit mailRateLimit;
+    
+    @Override
+    public void sendSimpleMail(SendMailRequest request) {
+        if (mailRateLimit.isLimited(request.getTo())) throw AppException.of(ErrorCode.MAIL_LIMITED);
+        mailService.sendSimpleMail(request);
+    }
+    
+    @Override
+    public void sendWelcomeMail(String to, String subject, Map<String, Object> variables) {
+        mailService.sendTemplateMail(to, subject, MailTemplate.WELCOME, variables);
+    }
+    
+    @Override
+    public void sendForotPasswordMail(String to, String subject, Map<String, Object> variables) {
+        mailService.sendTemplateMail(to, subject, MailTemplate.FORGOT_PASSWORD, variables);
+    }
 }

@@ -25,85 +25,85 @@ import java.util.Set;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
-	UserMapper mapper;
-	UserRepository repository;
-	ApplicationEventPublisher publisher;
-
-	@Override
-	public User create(UserRegistrationRequest request) {
-		if (existsByEmail(request.email())) throw AppException.of(ErrorCode.USER_EMAIL_EXISTS);
-		if (existsByUsername(request.username())) throw AppException.of(ErrorCode.USER_USERNAME_EXISTS);
-
-		User user = mapper.toEntity(request);
-
-		// Set role
-		UserRole role = new UserRole(user);
-		user.setRoles(Set.of(role));
-
-		return repository.save(user);
-	}
-
-	// Don't tell users that the identifier is incorrect
-	@Override
-	public User findByIdentifier(String identifier) {
-		return repository.findByIdentifier(identifier);
-	}
-
-	@Override
-	public User processOAuth2(String email) {
-		return repository.findUserAndRolesByEmail(email).orElseGet(() -> newOAuth2User(email));
-	}
-
-	private User newOAuth2User(String email) {
-		User user = new User();
-		user.setEmail(email);
-
-		UserRole role = new UserRole(user);
-		user.setRoles(Set.of(role));
-
-		String username = UsernameUtils.generateUsername(email);
-		user.setUsername(username);
-
-		User userSaved = repository.save(user);
-		publisher.publishEvent(new UserRegisteredEvent(userSaved));
-		return userSaved;
-	}
-
-	@Override
-	public Page<User> findAllUsers(Pageable pageable) {
-		return repository.findAll(pageable);
-	}
-
-	@Override
-	public Page<User> searchUsers(String searchTerm, Double threshold, Pageable pageable) {
-		return repository.findAll(searchTerm, threshold, pageable);
-	}
-
-	@Override
-	public void delete(Long id) {
-		repository.deleteById(id);
-	}
-
-	@Override
-	public Optional<User> findByEmail(String email) {
-		return repository.findByEmail(email);
-	}
-
-	@Override
-	public User getReference(Long id) {
-		return repository.getReferenceById(id);
-	}
-
-	@Override
-	public void save(User user) {
-		repository.save(user);
-	}
-
-	private boolean existsByEmail(String email) {
-		return repository.existsByEmail(email);
-	}
-
-	private boolean existsByUsername(String username) {
-		return repository.existsByUsername(username);
-	}
+    UserMapper mapper;
+    UserRepository repository;
+    ApplicationEventPublisher publisher;
+    
+    @Override
+    public User create(UserRegistrationRequest request) {
+        if (existsByEmail(request.email())) throw AppException.of(ErrorCode.USER_EMAIL_EXISTS);
+        if (existsByUsername(request.username())) throw AppException.of(ErrorCode.USER_USERNAME_EXISTS);
+        
+        User user = mapper.toEntity(request);
+        
+        // Set role
+        UserRole role = new UserRole(user);
+        user.setRoles(Set.of(role));
+        
+        return repository.save(user);
+    }
+    
+    // Don't tell users that the identifier is incorrect
+    @Override
+    public User findByIdentifier(String identifier) {
+        return repository.findByIdentifier(identifier);
+    }
+    
+    @Override
+    public User processOAuth2(String email) {
+        return repository.findUserAndRolesByEmail(email).orElseGet(() -> newOAuth2User(email));
+    }
+    
+    private User newOAuth2User(String email) {
+        User user = new User();
+        user.setEmail(email);
+        
+        UserRole role = new UserRole(user);
+        user.setRoles(Set.of(role));
+        
+        String username = UsernameUtils.generateUsername(email);
+        user.setUsername(username);
+        
+        User userSaved = repository.save(user);
+        publisher.publishEvent(new UserRegisteredEvent(userSaved));
+        return userSaved;
+    }
+    
+    @Override
+    public Page<User> findAllUsers(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+    
+    @Override
+    public Page<User> searchUsers(String searchTerm, Double threshold, Pageable pageable) {
+        return repository.findAll(searchTerm, threshold, pageable);
+    }
+    
+    @Override
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+    
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+    
+    @Override
+    public User getReference(Long id) {
+        return repository.getReferenceById(id);
+    }
+    
+    @Override
+    public void save(User user) {
+        repository.save(user);
+    }
+    
+    private boolean existsByEmail(String email) {
+        return repository.existsByEmail(email);
+    }
+    
+    private boolean existsByUsername(String username) {
+        return repository.existsByUsername(username);
+    }
 }

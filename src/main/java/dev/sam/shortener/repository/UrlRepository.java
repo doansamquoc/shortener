@@ -15,48 +15,52 @@ import java.util.Optional;
 
 @Repository
 public interface UrlRepository extends JpaRepository<Url, Long> {
-	boolean existsByShortCode(String shortCode);
-
-	Optional<Url> findByShortCode(String shortCode);
-
-	@Query("SELECT u.actualUrl FROM Url u WHERE u.shortCode = :shortCode")
-	Optional<String> findActualUrlByShortCode(String shortCode);
-
-	@Modifying
-	@Transactional
-	@Query("UPDATE Url u SET u.totalClicks = u.totalClicks + 1, u.lastClickAt = CURRENT_TIMESTAMP WHERE u.shortCode = :shortCode")
-	void incrementTotalClicks(@Param("shortCode") String shortCode);
-
-	@Query("SELECT u FROM Url u WHERE (:userId IS NULL OR u.user.id = :userId)")
-	Page<Url> findAllByUserId(Long userId, Pageable pageable);
-
-	@Query("""
-		SELECT u FROM Url u
-		WHERE (:userId IS NULL OR u.user.id = :userId)
-		AND (function('word_similarity', :searchTerm, u.title) > :threshold
-		     OR function('word_similarity', :searchTerm, u.actualUrl) > :threshold)
-		ORDER BY function('greatest',
-		     function('word_similarity', :searchTerm, u.title),
-		     function('word_similarity', :searchTerm, u.actualUrl)
-		) DESC
-	""")
-	Page<Url> searchWordSimilarity(
-	@Param("userId") Long userId,
-	@Param("searchTerm") String searchTerm,
-	@Param("threshold") Double threshold,
-	Pageable pageable
-	);
-
-	@Transactional
-	void deleteAllByUserId(Long userId);
-
-	@Transactional
-	void deleteByUserIdAndId(Long userId, Long id);
-
-	@Modifying
-	@Transactional
-	@Query("DELETE Url u WHERE u.lastClickAt < :threshold")
-	void cleanupUrls(@Param("threshold") Instant threshold);
-
-	Optional<Url> findByUserIdAndId(Long userId, Long id);
+    boolean existsByShortCode(String shortCode);
+    
+    Optional<Url> findByShortCode(String shortCode);
+    
+    @Query("SELECT u.actualUrl FROM Url u WHERE u.shortCode = :shortCode")
+    Optional<String> findActualUrlByShortCode(String shortCode);
+    
+    @Modifying
+    @Transactional
+    @Query(
+        "UPDATE Url u SET u.totalClicks = u.totalClicks + 1, u.lastClickAt = CURRENT_TIMESTAMP WHERE u.shortCode = :shortCode"
+    )
+    void incrementTotalClicks(@Param("shortCode") String shortCode);
+    
+    @Query("SELECT u FROM Url u WHERE (:userId IS NULL OR u.user.id = :userId)")
+    Page<Url> findAllByUserId(Long userId, Pageable pageable);
+    
+    @Query(
+        """
+            	SELECT u FROM Url u
+            	WHERE (:userId IS NULL OR u.user.id = :userId)
+            	AND (function('word_similarity', :searchTerm, u.title) > :threshold
+            	     OR function('word_similarity', :searchTerm, u.actualUrl) > :threshold)
+            	ORDER BY function('greatest',
+            	     function('word_similarity', :searchTerm, u.title),
+            	     function('word_similarity', :searchTerm, u.actualUrl)
+            	) DESC
+            """
+    )
+    Page<Url> searchWordSimilarity(
+        @Param("userId") Long userId,
+        @Param("searchTerm") String searchTerm,
+        @Param("threshold") Double threshold,
+        Pageable pageable
+    );
+    
+    @Transactional
+    void deleteAllByUserId(Long userId);
+    
+    @Transactional
+    void deleteByUserIdAndId(Long userId, Long id);
+    
+    @Modifying
+    @Transactional
+    @Query("DELETE Url u WHERE u.lastClickAt < :threshold")
+    void cleanupUrls(@Param("threshold") Instant threshold);
+    
+    Optional<Url> findByUserIdAndId(Long userId, Long id);
 }

@@ -23,40 +23,42 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ClickServiceImpl implements ClickService {
-	ClickMapper mapper;
-	ClickRepository repository;
-	CountryCodeService countryCodeService;
-	private final UrlService urlService;
-
-	@Override
-	public Click create(ClickRequest request) {
-		Click click = mapper.toEntity(request);
-		return save(click);
-	}
-
-	@Override
-	@Async("clickExecutor")
-	public void create(Long urlId, ClickRequest request) {
-		Click click = mapper.toEntity(request);
-
-		Url url = urlService.getReference(urlId);
-		click.setUrl(url);
-
-		String countryCode = countryCodeService.getCountryCode(request.ipAddress());
-		click.setCountryCode(countryCode);
-
-		log.info(click.toString());
-		save(click);
-	}
-
-	@Override
-	public PageResponse<ClickResponse> findAll(Long urlId, String searchTerm, Double threshold, Pageable pageable) {
-		if (searchTerm.isBlank()) return PageResponse.from(repository.findAllByUrlId(urlId, pageable).map(mapper::toDto));
-		return PageResponse.from(repository.search(urlId, searchTerm, threshold, pageable).map(mapper::toDto));
-	}
-
-
-	private Click save(Click click) {
-		return repository.save(click);
-	}
+    ClickMapper mapper;
+    ClickRepository repository;
+    CountryCodeService countryCodeService;
+    private final UrlService urlService;
+    
+    @Override
+    public Click create(ClickRequest request) {
+        Click click = mapper.toEntity(request);
+        return save(click);
+    }
+    
+    @Override
+    @Async("clickExecutor")
+    public void create(Long urlId, ClickRequest request) {
+        Click click = mapper.toEntity(request);
+        
+        Url url = urlService.getReference(urlId);
+        click.setUrl(url);
+        
+        String countryCode = countryCodeService.getCountryCode(request.ipAddress());
+        click.setCountryCode(countryCode);
+        
+        log.info(click.toString());
+        save(click);
+    }
+    
+    @Override
+    public PageResponse<ClickResponse> findAll(Long urlId, String searchTerm, Double threshold, Pageable pageable) {
+        if (searchTerm.isBlank()) {
+            return PageResponse.from(repository.findAllByUrlId(urlId, pageable).map(mapper::toDto));
+        }
+        return PageResponse.from(repository.search(urlId, searchTerm, threshold, pageable).map(mapper::toDto));
+    }
+    
+    
+    private Click save(Click click) {
+        return repository.save(click);
+    }
 }

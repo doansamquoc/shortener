@@ -23,41 +23,39 @@ import static dev.sam.shortener.constant.AppConstant.AUTHORIZE_PREFIX;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomUserDetails implements UserDetails {
-	Long id;
-	String username;
-	String email;
-	String password;
-	Collection<? extends GrantedAuthority> authorities;
-
-	public CustomUserDetails(User user) {
-		this.id = user.getId();
-		this.username = user.getUsername();
-		this.email = user.getEmail();
-		this.password = user.getPassword();
-		this.authorities = enrichAuthorities(user.getRoles());
-	}
-
-	public User getUser() {
-		return User.builder().id(id).username(username).email(email).password(password).build();
-	}
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.authorities;
-	}
-
-	@Override
-	public String getPassword() {
-		return this.password;
-	}
-
-	@Override
-	public String getUsername() {
-		return this.username;
-	}
-
-	private static Collection<? extends GrantedAuthority> enrichAuthorities(Set<UserRole> roles) {
-		return roles.stream().map(role -> new SimpleGrantedAuthority(AUTHORIZE_PREFIX + role.getRole().name())
-		).collect(Collectors.toSet());
-	}
+    Long id;
+    String username;
+    String email;
+    String password;
+    Collection<? extends GrantedAuthority> authorities;
+    
+    public CustomUserDetails(User user) {
+        this.id = user.getId(); this.username = user.getUsername(); this.email = user.getEmail();
+        this.password = user.getPassword(); this.authorities = enrichAuthorities(user.getRoles());
+    }
+    
+    public User getUser() {
+        return User.builder().id(id).username(username).email(email).password(password).build();
+    }
+    
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
+    
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+    
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+    
+    private static Collection<? extends GrantedAuthority> enrichAuthorities(Set<UserRole> roles) {
+        return roles.stream()
+                    .map(role -> new SimpleGrantedAuthority(AUTHORIZE_PREFIX + role.getRole().name()))
+                    .collect(Collectors.toSet());
+    }
 }

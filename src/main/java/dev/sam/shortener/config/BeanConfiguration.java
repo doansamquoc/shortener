@@ -23,37 +23,39 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BeanConfiguration {
-	AppProperties props;
-
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration cors = new CorsConfiguration().applyPermitDefaultValues();
-		cors.setAllowedOriginPatterns(List.of("http://localhost:*"));
-		cors.setAllowedHeaders(List.of("*"));
-		cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-		cors.setAllowCredentials(true);
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", cors);
-		return source;
-	}
-
-	@Bean
-	PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
-
-	@Bean
-	SecretKey secretKey() {
-		byte[] key = props.getSecretKey().getBytes(StandardCharsets.UTF_8);
-		if (key.length < 32) throw new IllegalArgumentException("Secret key length must be at least 32 characters");
-		return new SecretKeySpec(key, MacAlgorithm.HS512.getName());
-	}
-
-	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) {
-		try {
-			return configuration.getAuthenticationManager();
-		} catch (Exception e) {
-			throw new RuntimeException("Cannot get authentication manager configuration", e);
-		}
-	}
+    AppProperties props;
+    
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cors = new CorsConfiguration().applyPermitDefaultValues();
+        cors.setAllowedOriginPatterns(List.of("*"));
+        cors.setAllowedHeaders(List.of("*"));
+        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        cors.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cors);
+        return source;
+    }
+    
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    SecretKey secretKey() {
+        byte[] key = props.getSecretKey().getBytes(StandardCharsets.UTF_8);
+        if (key.length < 32) throw new IllegalArgumentException("Secret key length must be at least 32 characters");
+        return new SecretKeySpec(key, MacAlgorithm.HS512.getName());
+    }
+    
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) {
+        try {
+            return configuration.getAuthenticationManager();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot get authentication manager configuration", e);
+        }
+    }
 }

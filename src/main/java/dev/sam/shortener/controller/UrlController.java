@@ -28,57 +28,57 @@ import static dev.sam.shortener.constant.EndpointConstant.V1;
 @RequestMapping(V1 + "/urls")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UrlController {
-	UrlService service;
-
-	@PostMapping
-	ResponseEntity<ApiResponse<UrlResponse>> create(
-	@Valid @RequestBody UrlCreationRequest request,
-	HttpServletRequest servletRequest,
-	@AuthenticationPrincipal Jwt jwt
-	) {
-		Long userId = jwt == null ? null : Long.valueOf(jwt.getSubject());
-		UrlResponse response = service.create(userId, servletRequest.getRemoteAddr(), request);
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.of(response));
-	}
-
-	@GetMapping
-	ResponseEntity<ApiResponse<PageResponse<UrlResponse>>> searchUrl(
-	@RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
-	@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-	@CurrentUserId Long currentUserId
-	) {
-		PageResponse<UrlResponse> response = service.searchUrl(currentUserId, searchTerm, pageable);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
-	}
-
-	@PatchMapping("/{id}")
-	ResponseEntity<ApiResponse<UrlResponse>> update(
-	@PathVariable Long id,
-	@Valid @RequestBody UrlUpdateRequest request,
-	@CurrentUserId Long currentUserId
-	) {
-		UrlResponse response = service.update(currentUserId, id, request);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
-	}
-
-	@GetMapping("/{shortCode}")
-	ResponseEntity<ApiResponse<UrlResponse>> getUrlById(@PathVariable String shortCode) {
-		UrlResponse response = service.getUrl(shortCode);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
-	}
-
-	@DeleteMapping("/{id}")
-	ResponseEntity<ApiResponse<String>> deleteUrlById(
-	@PathVariable Long id,
-	@CurrentUserId Long currentUserId
-	) {
-		service.delete(currentUserId, id);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of("Deleted successfully"));
-	}
-
-	@DeleteMapping
-	ResponseEntity<ApiResponse<String>> deleteAllByUser(@CurrentUserId Long currentUserId) {
-		service.deleteAll(currentUserId);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of("All urls deleted successfully"));
-	}
+    UrlService service;
+    
+    @PostMapping
+    ResponseEntity<ApiResponse<UrlResponse>> create(
+        @Valid @RequestBody UrlCreationRequest request,
+        HttpServletRequest servletRequest,
+        @AuthenticationPrincipal Jwt jwt
+    ) {
+        Long userId = jwt == null ? null : Long.valueOf(jwt.getSubject());
+        UrlResponse response = service.create(userId, servletRequest.getRemoteAddr(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.of(response));
+    }
+    
+    @GetMapping
+    ResponseEntity<ApiResponse<PageResponse<UrlResponse>>> searchUrl(
+        @RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
+        @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+        @CurrentUserId Long currentUserId
+    ) {
+        PageResponse<UrlResponse> response = service.searchUrl(currentUserId, searchTerm, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
+    }
+    
+    @PatchMapping("/{id}")
+    ResponseEntity<ApiResponse<UrlResponse>> update(
+        @PathVariable Long id,
+        @Valid @RequestBody UrlUpdateRequest request,
+        @CurrentUserId Long currentUserId
+    ) {
+        UrlResponse response = service.update(currentUserId, id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
+    }
+    
+    @GetMapping("/{shortCode}")
+    ResponseEntity<ApiResponse<UrlResponse>> getUrlById(@PathVariable String shortCode) {
+        UrlResponse response = service.getUrl(shortCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of(response));
+    }
+    
+    @DeleteMapping("/{id}")
+    ResponseEntity<ApiResponse<String>> deleteUrlById(
+        @PathVariable Long id,
+        @CurrentUserId Long currentUserId
+    ) {
+        service.delete(currentUserId, id);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of("Deleted successfully"));
+    }
+    
+    @DeleteMapping
+    ResponseEntity<ApiResponse<String>> deleteAllByUser(@CurrentUserId Long currentUserId) {
+        service.deleteAll(currentUserId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.of("All urls deleted successfully"));
+    }
 }

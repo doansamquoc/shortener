@@ -5,20 +5,20 @@ import org.hibernate.boot.model.FunctionContributor;
 import org.hibernate.type.StandardBasicTypes;
 
 public class SQLFunctionContributor implements FunctionContributor {
-	@Override
-	public void contributeFunctions(FunctionContributions contributions) {
-		// Search
-		contributions.getFunctionRegistry().registerPattern(
-			"word_similarity",
-			"word_similarity(?1, ?2)",
-			contributions.getTypeConfiguration().getBasicTypeRegistry().resolve(StandardBasicTypes.DOUBLE)
-		);
-
-		// Sort
-		contributions.getFunctionRegistry().registerPattern(
-			"fts_rank",
-			"fts_rank(?1, websearch_to_tsquery('simple',?2))",
-			contributions.getTypeConfiguration().getBasicTypeRegistry().resolve(StandardBasicTypes.DOUBLE)
-		);
-	}
+    @Override
+    public void contributeFunctions(FunctionContributions contributions) {
+        // Search
+        contributions.getFunctionRegistry().registerPattern(
+            "word_similarity",
+            "word_similarity(?1, ?2)",
+            contributions.getTypeConfiguration().getBasicTypeRegistry().resolve(StandardBasicTypes.DOUBLE)
+        );
+        
+        // Sort
+        contributions.getFunctionRegistry().registerPattern(
+            "fts_rank",
+            "fts_rank(?1, websearch_to_tsquery('simple',?2))",
+            contributions.getTypeConfiguration().getBasicTypeRegistry().resolve(StandardBasicTypes.DOUBLE)
+        );
+    }
 }

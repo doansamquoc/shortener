@@ -16,26 +16,26 @@ import org.springframework.context.annotation.Configuration;
 public class AppProperties {
 	String secretKey;
 	int cleanupUrlsAfterDays;
-
+	
 	// Token
 	long accessTokenExpiration;
 	long refreshTokenExpiration;
-
+	
 	long authCodeExpiration;
 	String frontendRedirectUrl;
-
+	
 	long forgotPasswordCodeExpiration;
 	long resetPasswordTokenExpiration;
-
+	
 	long createUrlLimit;
 	long createUrlLimitDuration;
-
+	
 	@NestedConfigurationProperty
 	final SpringDoc springDoc = new SpringDoc();
-
+	
 	@NestedConfigurationProperty
 	final Email email = new Email();
-
+	
 	@Getter
 	@Setter
 	@FieldDefaults(level = AccessLevel.PRIVATE)
@@ -45,7 +45,7 @@ public class AppProperties {
 		String prodServer;
 		String version;
 	}
-
+	
 	@Getter
 	@Setter
 	@FieldDefaults(level = AccessLevel.PRIVATE)

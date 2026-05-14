@@ -22,40 +22,40 @@ import static dev.sam.shortener.constant.EndpointConstant.V1;
 @RequestMapping(V1 + "/admin")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminController {
-	AdminService adminService;
-	UrlService urlService;
-
-	@GetMapping("/users")
-	ResponseEntity<ApiResponse<PageResponse<UserDetailsResponse>>> getAllUsers(
-	@RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
-	@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-	) {
-		PageResponse<UserDetailsResponse> response = adminService.findAllUsers(searchTerm, 0.3, pageable);
-		return ResponseEntity.ok(ApiResponse.of(response));
-	}
-
-	@DeleteMapping("/users/{id}")
-	ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable Long id) {
-		adminService.deleteUser(id);
-		return ResponseEntity.noContent().build();
-	}
-
-	@GetMapping("/urls")
-	ResponseEntity<ApiResponse<PageResponse<UrlResponse>>> getAllUrls(
-	@RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
-	@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-	) {
-		PageResponse<UrlResponse> response = urlService.searchUrl(null, searchTerm, pageable);
-		return ResponseEntity.ok(ApiResponse.of(response));
-	}
-
-	@GetMapping("/urls/{userId}")
-	ResponseEntity<ApiResponse<PageResponse<UrlResponse>>> getAllUrls(
-	@PathVariable Long userId,
-	@RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
-	@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-	) {
-		PageResponse<UrlResponse> response = urlService.searchUrl(userId, searchTerm, pageable);
-		return ResponseEntity.ok(ApiResponse.of(response));
-	}
+    AdminService adminService;
+    UrlService urlService;
+    
+    @GetMapping("/users")
+    ResponseEntity<ApiResponse<PageResponse<UserDetailsResponse>>> getAllUsers(
+        @RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
+        @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        PageResponse<UserDetailsResponse> response = adminService.findAllUsers(searchTerm, 0.3, pageable);
+        return ResponseEntity.ok(ApiResponse.of(response));
+    }
+    
+    @DeleteMapping("/users/{id}")
+    ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable Long id) {
+        adminService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/urls")
+    ResponseEntity<ApiResponse<PageResponse<UrlResponse>>> getAllUrls(
+        @RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
+        @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        PageResponse<UrlResponse> response = urlService.searchUrl(null, searchTerm, pageable);
+        return ResponseEntity.ok(ApiResponse.of(response));
+    }
+    
+    @GetMapping("/urls/{userId}")
+    ResponseEntity<ApiResponse<PageResponse<UrlResponse>>> getAllUrls(
+        @PathVariable Long userId,
+        @RequestParam(name = "q", defaultValue = "", required = false) String searchTerm,
+        @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        PageResponse<UrlResponse> response = urlService.searchUrl(userId, searchTerm, pageable);
+        return ResponseEntity.ok(ApiResponse.of(response));
+    }
 }

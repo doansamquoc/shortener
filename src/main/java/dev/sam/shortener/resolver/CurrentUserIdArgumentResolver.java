@@ -15,22 +15,22 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 public class CurrentUserIdArgumentResolver implements HandlerMethodArgumentResolver {
-	@Override
-	public boolean supportsParameter(@NonNull MethodParameter parameter) {
-		return parameter.hasParameterAnnotation(CurrentUserId.class) && parameter.getParameterType().equals(Long.class);
-	}
-
-	@Override
-	public @Nullable Object resolveArgument(
-	@NonNull MethodParameter parameter,
-	@Nullable ModelAndViewContainer mavContainer,
-	@NonNull NativeWebRequest webRequest,
-	@Nullable WebDataBinderFactory binderFactory
-	) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
-			return Long.valueOf(jwt.getSubject());
-		}
-		throw AppException.of(ErrorCode.AUTH_UNAUTHORIZED);
-	}
+    @Override
+    public boolean supportsParameter(@NonNull MethodParameter parameter) {
+        return parameter.hasParameterAnnotation(CurrentUserId.class) && parameter.getParameterType().equals(Long.class);
+    }
+    
+    @Override
+    public @Nullable Object resolveArgument(
+        @NonNull MethodParameter parameter,
+        @Nullable ModelAndViewContainer mavContainer,
+        @NonNull NativeWebRequest webRequest,
+        @Nullable WebDataBinderFactory binderFactory
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+            return Long.valueOf(jwt.getSubject());
+        }
+        throw AppException.of(ErrorCode.AUTH_UNAUTHORIZED);
+    }
 }
