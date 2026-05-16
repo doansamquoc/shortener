@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.validation.FieldError;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +26,12 @@ public class ErrorResponse {
 		return new ErrorResponse(status, new ErrorDetails(code, message, Collections.emptyList()));
 	}
 
-	public static ErrorResponse of(int status, int code, String message, List<FieldViolation> fieldViolations) {
+	public static ErrorResponse of(
+		int status,
+		int code,
+		String message,
+		List<FieldViolation> fieldViolations
+	) {
 		return new ErrorResponse(status, new ErrorDetails(code, message, fieldViolations));
 	}
 }

@@ -29,10 +29,20 @@ public class User extends Base {
 	String email;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(
+		mappedBy = "user",
+		fetch = FetchType.EAGER,
+		cascade = CascadeType.ALL,
+		orphanRemoval = true
+	)
 	Set<UserRole> roles = new HashSet<>();
 
 	@Builder.Default
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(
+		mappedBy = "user",
+		fetch = FetchType.LAZY,
+		cascade = CascadeType.ALL,
+		orphanRemoval = true
+	)
 	List<Url> urls = new ArrayList<>();
 }

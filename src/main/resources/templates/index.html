@@ -1,66 +1,105 @@
 <!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="UTF-8"/>
-    <link href="../static/css/css.css" rel="stylesheet"/>
-    <link
-            crossorigin="anonymous"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-            rel="stylesheet"
-    />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../static/css/css.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
     <title th:text="${title}">Shortener - URL Shortener</title>
-</head>
-<body>
-<header>
-    <h1>URL Shortener Demo</h1>
-    <span>This is demo. Visit API docs or source code</span>
-</header>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body p-4">
-                    <form id="shorten-form">
-                        <div class="col-md-6">
-                            <input class="form-control" required type="text"/>
-                            <div class="invalid-feedback">Please provide a valid city.</div>
-                        </div>
-                        <button class="btn btn-primary w-100 d-flex align-items-center justify-content-center"
-                                id="submit-btn" type="submit">
-                            <span id="btn-text">Shorten</span>
-                            <div class="d-none align-items-center gap-2" id="btn-spinner">
-                                <span aria-hidden="true" class="spinner-border spinner-border-sm"></span>
-                                <span>Đang xử lý...</span>
-                            </div>
-                        </button>
-                        <button class="btn btn-primary" disabled type="button">
-                            <span aria-hidden="true" class="spinner-border spinner-border-sm"></span>
-                            <span role="status">Loading...</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
+  </head>
+  <body class="vh-100 d-flex p-2">
+    <div class="m-auto w-100" style="max-width: 768px">
+      <div class="card shadow text-start">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="d-flex gap-2">
+            <i class="bi bi-folder-symlink-fill"></i>
+            <span class="fw-medium">Shortener</span>
+          </div>
+          <div>
+            <button class="btn btn-link" style="aspect-ratio: 1/1">
+              <i class="bi bi-gear-fill text-black"></i>
+            </button>
+            <a href="https://github.com/doansamquoc/shortener" target="_blank">
+              <button class="btn btn-link" style="aspect-ratio: 1/1">
+                <i class="bi bi-github text-black"></i>
+              </button>
+            </a>
+          </div>
         </div>
+        <div class="card-body">
+          <form id="shortenForm">
+            <div class="mb-5">
+              <label for="url" class="form-label">Long URL</label>
+              <div class="input-group has-validation">
+                <span class="input-group-text" id="addon"><i class="bi bi-globe-americas"></i></span>
+                <input type="url" class="form-control form-control-lg" id="url" aria-describedby="addon" placeholder="Paste long URL here..." required />
+                <div class="invalid-feedback" id="urlFeedBack">Please enter an URL.</div>
+              </div>
+            </div>
+            <div class="d-flex gap-3">
+              <button class="btn btn-danger" type="reset">
+                <i class="bi bi-trash"></i>
+                Clear
+              </button>
+              <button class="btn btn-primary flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2" id="btnSubmit" type="submit">
+                <i class="bi bi-stars" id="btnIcon"></i>
+                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true" id="btnSpinner"></span>
+                <span id="btnText">Make A Magic...</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-</div>
 
-<script th:src="@{/js/script.js}"></script>
-<script src="../static/js/script.js"></script>
-<script
-        crossorigin="anonymous"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-></script>
-<script
-        crossorigin="anonymous"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-></script>
-<script
-        crossorigin="anonymous"
-        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-></script>
-</body>
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <span class="modal-title" id="successModalLabel"><i class="bi bi-check-circle-fill me-2"></i>Successfully!</span>
+            <button type="button" class="btn-close btn-close-white btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <label for="shortenedUrl" class="form-label">Shortened URL</label>
+              <div class="input-group has-validation">
+                <input type="url" class="form-control form-control-lg" id="shortenedUrl" aria-describedby="addon" readonly />
+              </div>
+              <div>
+                <i class="bi bi-link"></i>
+                <a href="https://shortener-wz64.onrender.com/" id="shortenedRedirect">aaaaa</a>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer d-flex gap-2">
+            <button class="btn btn-danger" type="button" data-bs-dismiss="modal">
+              <i class="bi bi-x"></i>
+              Close
+            </button>
+            <button class="btn btn-primary flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2" id="btnCopy" type="button">
+              <i class="bi bi-copy" id="btnIcon"></i>
+              <span id="btnText">Copy URL</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="copiedToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">Notification</strong>
+          <small>Just now</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">Copied!</div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/script.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+  </body>
 </html>
