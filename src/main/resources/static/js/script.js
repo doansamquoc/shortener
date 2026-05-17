@@ -57,7 +57,7 @@ document.getElementById("shortenForm").addEventListener("submit", async (e) => {
 });
 
 async function shortenUrl(url) {
-    return await fetch("http://localhost:8080/api/v1/urls", {
+    return await fetch("/api/v1/urls", {
         method: "POST",
         headers: new Headers({"Content-Type": "application/json"}),
         body: JSON.stringify({actualUrl: url}),
