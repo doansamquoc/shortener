@@ -64,7 +64,7 @@ Simply click run in your IDE. If you use Docker, please start docker first.
 3. Access Endpoints<br>
 - Swagger UI: http://localhost:8080/swagger-ui/index.html
 - Health Check: http://localhost:8080/actuator/health
-4. Online Demo
+4. Online Demo <br/>
+You might have to wait for Render to start :D
 - Demo: https://shortener-wz64.onrender.com
 - Swagger UI: https://shortener-wz64.onrender.com/swagger-ui/index.html <br/>
-  *You may have to wait for Render to start :D*
