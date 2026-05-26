@@ -3,9 +3,16 @@
 <head>
 	<meta charset="UTF-8"/>
 	<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+
+	<meta property="og:type" content="website"/>
+	<meta property="og:title" th:content="${title}"/>
+	<meta property="og:description" content="Create secure, professional-looking shortened links in just one second."/>
+
+	<meta name="keywords" content="rút gọn link, rut gon link, short url, rút gọn liên kết, shortener, bitly alternative"/>
+	<title th:text="${title}">Shortener - URL Shortener</title>
+
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet"/>
-	<title th:text="${title}">Shortener - URL Shortener</title>
 </head>
 <body class="vh-100 d-flex p-2">
 <div class="m-auto w-100" style="max-width: 768px">
