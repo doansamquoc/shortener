@@ -9,7 +9,7 @@ spring:
     redis:
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
-      port: ${REDIS_PORT}
+      port: ${REDIS_PORT:6379}
       ssl:
         enabled: true
 
@@ -17,9 +17,9 @@ spring:
     type: redis
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/shortener}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:123456}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -81,7 +81,7 @@ logging:
 
 # Application configuration properties
 app:
-  secret-key: ${SECRET_KEY}
+  secret-key: ${SECRET_KEY:jfjdiikjskjfjgsjkhfghsfhjgsfhgioweior}
   cleanup-urls-after-days: 30
 
   # Token second * minute * hour * day
