@@ -1,35 +1,59 @@
 package dev.sam.shortener.cache.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Expiry;
 import dev.sam.shortener.cache.ForgotPasswordCache;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-import static dev.sam.shortener.constant.CacheNames.FORGOT_PASSWORD;
-
 @Component
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ForgotPasswordCacheImpl implements ForgotPasswordCache {
-	RedisTemplate<String, String> template;
 
-	@Override
-	public void add(String email, String code, long duration) {
-		if (get(email) == null) remove(email);
-		template.opsForValue().set(FORGOT_PASSWORD + email, code, duration, TimeUnit.MILLISECONDS);
-	}
+    private record ExpiringCode(String code, long nanos) {}
 
-	@Override
-	public String get(String email) {
-		return template.opsForValue().get(FORGOT_PASSWORD + email);
-	}
+    private final Cache<String, ExpiringCode> cache;
 
-	@Override
-	public void remove(String email) {
-		template.delete(FORGOT_PASSWORD + email);
-	}
+    public ForgotPasswordCacheImpl() {
+        this.cache = Caffeine.newBuilder()
+                .maximumSize(50_000)
+                .expireAfter(new Expiry<String, ExpiringCode>() {
+                    @Override
+                    public long expireAfterCreate(String key, ExpiringCode value, long currentTime) {
+                        return value.nanos();
+                    }
+
+                    @Override
+                    public long expireAfterUpdate(String key, ExpiringCode value, long currentTime, long currentDuration) {
+                        return value.nanos();
+                    }
+
+                    @Override
+                    public long expireAfterRead(String key, ExpiringCode value, long currentTime, long currentDuration) {
+                        return currentDuration;
+                    }
+                })
+                .build();
+    }
+
+    @Override
+    public void add(String email, String code, long duration) {
+        if (get(email) != null) {
+            remove(email);
+        }
+        long nanos = TimeUnit.MILLISECONDS.toNanos(duration);
+        cache.put(email, new ExpiringCode(code, nanos));
+    }
+
+    @Override
+    public String get(String email) {
+        ExpiringCode entry = cache.getIfPresent(email);
+        return entry != null ? entry.code() : null;
+    }
+
+    @Override
+    public void remove(String email) {
+        cache.invalidate(email);
+    }
 }

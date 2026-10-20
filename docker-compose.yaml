@@ -24,22 +24,6 @@ services:
     depends_on:
       - shortener-db
 
-  shortener-cache:
-    container_name: shortener-cache
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-    command: redis-server --requirepass 123456
-    volumes:
-      - shortener-cache-data:/data
-
-  shortener-redis-insight:
-    image: redis/redisinsight:latest
-    ports:
-      - "5540:5540"
-    volumes:
-      - shortener-redis-insight:/data
-
   app:
     build:
       context: .
@@ -48,9 +32,6 @@ services:
       - "8008:8080"
     depends_on:
       - shortener-db
-      - shortener-cache
 
 volumes:
   shortener-db-data:
-  shortener-cache-data:
-  shortener-redis-insight:

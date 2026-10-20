@@ -1,34 +1,56 @@
 package dev.sam.shortener.cache.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Expiry;
 import dev.sam.shortener.cache.ResetTokenCache;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-import static dev.sam.shortener.constant.CacheNames.RESET_CODE;
-
 @Component
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ResetTokenCacheImpl implements ResetTokenCache {
-	RedisTemplate<String, Object> template;
 
-	@Override
-	public void add(String token, String email, long duration) {
-		template.opsForValue().set(RESET_CODE + token, email, duration, TimeUnit.MILLISECONDS);
-	}
+    private record ExpiringEmail(String email, long nanos) {}
 
-	@Override
-	public String get(String token) {
-		return (String) template.opsForValue().get(RESET_CODE + token);
-	}
+    private final Cache<String, ExpiringEmail> cache;
 
-	@Override
-	public void remove(String token) {
-		template.delete(RESET_CODE + token);
-	}
+    public ResetTokenCacheImpl() {
+        this.cache = Caffeine.newBuilder()
+                .maximumSize(50_000)
+                .expireAfter(new Expiry<String, ExpiringEmail>() {
+                    @Override
+                    public long expireAfterCreate(String key, ExpiringEmail value, long currentTime) {
+                        return value.nanos();
+                    }
+
+                    @Override
+                    public long expireAfterUpdate(String key, ExpiringEmail value, long currentTime, long currentDuration) {
+                        return value.nanos();
+                    }
+
+                    @Override
+                    public long expireAfterRead(String key, ExpiringEmail value, long currentTime, long currentDuration) {
+                        return currentDuration;
+                    }
+                })
+                .build();
+    }
+
+    @Override
+    public void add(String token, String email, long duration) {
+        long nanos = TimeUnit.MILLISECONDS.toNanos(duration);
+        cache.put(token, new ExpiringEmail(email, nanos));
+    }
+
+    @Override
+    public String get(String token) {
+        ExpiringEmail entry = cache.getIfPresent(token);
+        return entry != null ? entry.email() : null;
+    }
+
+    @Override
+    public void remove(String token) {
+        cache.invalidate(token);
+    }
 }
